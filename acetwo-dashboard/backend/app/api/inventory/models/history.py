@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Enum, ForeignKey, DateTime
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from db.database import Base
 from enum import Enum as PyEnum
@@ -20,12 +21,12 @@ class InventoryRemoveReason(PyEnum):
 class InventoryHistory(Base):
     __tablename__ = "inventory_history"
 
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    item_id = Column(String, ForeignKey("items.id"), nullable=False)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    item_id = Column(UUID(as_uuid=True), ForeignKey("items.id"), nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow, index=True)
     size = Column(String, nullable=False)
     quantity_changed = Column(Integer, nullable=False)
-    reason = Column(String, nullable=False)  # Will be validated in service/schema layer
+    reason = Column(String, nullable=False)  # You may later use Enum or validate this in schema
     note = Column(String)
 
     item = relationship("Item", back_populates="history")
