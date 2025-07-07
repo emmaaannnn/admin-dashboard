@@ -8,6 +8,7 @@ const Home: React.FC = () => {
       <h1>Acetwo Admin Dashboard</h1>
       <nav className="home-nav">
         <Link to="/inventory" className="home-button">📦 Inventory</Link>
+        <Link to="/expenses" className="home-button">💰 Expenses</Link>
       </nav>
     </main>
   );
