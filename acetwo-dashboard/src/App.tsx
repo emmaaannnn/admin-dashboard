@@ -1,23 +1,13 @@
-import React from 'react';
-import './App.css';
+import { Routes, Route } from 'react-router-dom';
+import Home from './components/Home';
+import InventoryHome from './features/inventory/screens/InventoryHome';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/inventory" element={<InventoryHome />} />
+    </Routes>
   );
 }
 

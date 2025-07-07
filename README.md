@@ -83,7 +83,7 @@ acetwo-admin/
 ### Frontend Setup
 ```bash
 git clone https://github.com/your-username/acetwo-admin.git
-cd acetwo-admin
+cd acetwo-dashboard
 npm install
 npm run dev  # Starts dev server on localhost:5173
 ```
