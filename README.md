@@ -98,6 +98,17 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
+# Recreating SQLite Database
+``` bash
+rm dev.db
+python
+>>> from db.database import Base, engine
+>>> from api.inventory.models.item import Item
+>>> from api.inventory.models.history import InventoryHistory
+>>> Base.metadata.create_all(bind=engine)
+>>> exit()
+```
+
 ## 📌 Deployment Plan
 | Stage          | Platform                              |
 |----------------|----------------------------------------|
