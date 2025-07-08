@@ -37,7 +37,7 @@ items = [
         is_archived=False,
         image_urls=["https://example.com/denim-jacket.jpg"],
         collection="Winter Drop",
-        clothing_type=ClothingType.jacket,
+        clothing_type=ClothingType.outerwear,
         last_updated=datetime.utcnow(),
     ),
     Item(
@@ -49,7 +49,7 @@ items = [
         is_archived=False,
         image_urls=["https://example.com/puffer.jpg"],
         collection="Winter Drop",
-        clothing_type=ClothingType.jacket,
+        clothing_type=ClothingType.outerwear,
         last_updated=datetime.utcnow(),
     ),
     Item(

@@ -6,12 +6,13 @@ from collections import Counter
 
 # Enum 
 class ClothingType(str, Enum):
-    tshirt = "tshirt"
-    pants = "pants"
-    shorts = "shorts"
-    jacket = "jacket"
-    hoodie = "hoodie"
-    accessories = "accessories"
+    tshirt = "T Shirt"
+    pants = "Pants"
+    shorts = "Shorts"
+    outerwear = "Outerwear"
+    hoodie = "Hoodie"
+    jumper = "Jumper"
+    accessories = "Accessories"
 
 #  Base Shared Fields 
 class ItemBase(BaseModel):
@@ -48,6 +49,7 @@ class ItemRead(ItemBase):
     class Config:
         orm_mode = True
 
+    # Picks price that is most common for display purposes
     @staticmethod
     def compute_display_price(size_prices: Dict[str, float]) -> float:
         from collections import Counter
