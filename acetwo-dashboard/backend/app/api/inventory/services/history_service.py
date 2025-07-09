@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models.history import InventoryHistory
-from schemas.history import InventoryHistoryCreate, InventoryHistoryUpdate
+from app.api.inventory.models.history import InventoryHistory
+from app.api.inventory.schemas.history import InventoryHistoryCreate, InventoryHistoryUpdate
 from uuid import UUID
 
 def create_history(db: Session, history_data: InventoryHistoryCreate):

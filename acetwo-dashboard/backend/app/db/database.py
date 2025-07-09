@@ -4,25 +4,20 @@ from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 import os
 
-# Load env variables from .env file
+# Load .env file from current folder
 load_dotenv()
 
-ENV = os.getenv("ENV", "dev").lower()
+# Use DATABASE_URL from .env, or fallback to dev.db
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./dev.db")
 
-if ENV == "prod":
-    DATABASE_URL = os.getenv("DATABASE_URL")
-    if not DATABASE_URL:
-        raise ValueError("DATABASE_URL is not set in the environment.")
-else:
-    DATABASE_URL = "sqlite:///./dev.db"
-
-# SQLAlchemy setup
+# SQLite-specific config
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+
+# SQLAlchemy engine setup
 engine = create_engine(DATABASE_URL, connect_args=connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-# Dependency for FastAPI routes
 def get_db():
     db = SessionLocal()
     try:

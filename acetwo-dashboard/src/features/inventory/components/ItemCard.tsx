@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-
-type Item = {
-  name: string;
-  effectivePrice: number;
-  imageUrls: string[];
-  isAvailable: boolean;
-  isOutOfStock: boolean;
-  sizeQuantities: Record<string, number>;
-};
+import type { Item } from "../types/itemTypes";
 
 type ItemCardProps = {
   item: Item;
@@ -16,10 +8,10 @@ type ItemCardProps = {
 
 const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
   const [availabilityStatus, setAvailabilityStatus] = useState(
-    item.isAvailable ? "Available" : "Hidden"
+    item.is_available ? "Available" : "Hidden"
   );
   const [localQuantities, setLocalQuantities] = useState<Record<string, number>>(
-    { ...item.sizeQuantities }
+    { ...item.size_quantities }
   );
 
   const totalQuantity = Object.values(localQuantities).reduce(
@@ -48,7 +40,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
             width: 80,
             height: 80,
             borderRadius: 8,
-            backgroundImage: `url(${item.imageUrls[0]})`,
+            backgroundImage: `url(${item.image_urls[0]})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundColor: "#eee",
@@ -60,7 +52,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
         {/* Name, Price, Quantity */}
         <div style={{ flex: 3, display: "flex", flexDirection: "column", justifyContent: "center" }}>
           <div style={{ fontSize: 16, fontWeight: "bold" }}>{item.name}</div>
-          <div style={{ marginTop: 6 }}>Price: ${item.effectivePrice.toFixed(2)}</div>
+          <div style={{ marginTop: 6 }}>Price: ${item.display_price.toFixed(2)}</div>
           <div>Qty: {totalQuantity}</div>
         </div>
 
@@ -68,7 +60,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
 
         {/* Availability */}
         <div style={{ width: 100, textAlign: "center", alignSelf: "center" }}>
-          {item.isOutOfStock ? (
+          {item.is_out_of_stock ? (
             <span style={{ color: "red", fontWeight: 600 }}>Out of Stock</span>
           ) : (
             <select

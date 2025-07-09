@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from db.database import Base, engine
-from routes import item, history
+from app.db.database import Base, engine
+from app.api.inventory.routes import items, history
 
 # Optional: create tables automatically on startup
 Base.metadata.create_all(bind=engine)
@@ -27,5 +27,5 @@ app.add_middleware(
 )
 
 # Include routes
-app.include_router(item.router)
+app.include_router(items.router)
 app.include_router(history.router)

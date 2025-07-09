@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from api.inventory.models.item import Item
-from api.inventory.schemas.item import ItemCreate, ItemUpdate, ItemQuickEdit
+from app.api.inventory.models.item import Item
+from app.api.inventory.schemas.item import ItemCreate, ItemUpdate, ItemQuickEdit
 from uuid import UUID
 from fastapi import HTTPException
 from datetime import datetime

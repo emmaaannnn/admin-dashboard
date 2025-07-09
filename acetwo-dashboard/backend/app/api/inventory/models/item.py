@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 
 from .history import InventoryHistory
 
-from db.database import Base
+from app.db.database import Base
 
 import uuid
 from enum import Enum as PyEnum

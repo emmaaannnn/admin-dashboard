@@ -1,46 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ItemList from '../components/ItemList';
-import type { Item } from '../components/ItemList';
+import { getItems } from '../api/getItems';
+import type { Item } from '../types/itemTypes';
 
 const InventoryHome: React.FC = () => {
-  // Mock data
-  const [items] = useState<Item[]>([
-    {
-      name: "Classic Tee",
-      effectivePrice: 39.99,
-      imageUrls: ["https://via.placeholder.com/80"],
-      isAvailable: true,
-      isOutOfStock: false,
-      sizeQuantities: {
-        S: 5,
-        M: 10,
-        L: 2,
-      },
-    },
-    {
-      name: "Oversized Hoodie",
-      effectivePrice: 79.99,
-      imageUrls: ["https://via.placeholder.com/80"],
-      isAvailable: false,
-      isOutOfStock: false,
-      sizeQuantities: {
-        M: 3,
-        L: 8,
-      },
-    },
-    {
-      name: "Hoodie",
-      effectivePrice: 79.99,
-      imageUrls: ["https://via.placeholder.com/80"],
-      isAvailable: false,
-      isOutOfStock: true,
-      sizeQuantities: {
-        M: 0,
-        L: 0,
-      },
-    },
-  ]);
+  const [items, setItems] = useState<Item[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const data = await getItems();
+        setItems(data);
+      } catch (error) {
+        console.error("Failed to fetch items:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchItems();
+  }, []);
+
 
   const handleItemChanged = () => {
     console.log("An item was changed.");
@@ -58,7 +40,11 @@ const InventoryHome: React.FC = () => {
       </div>
 
       {/* Item List */}
-      <ItemList items={items} onItemChanged={handleItemChanged} />
+      {loading ? (
+        <p>Loading items...</p>
+      ) : (
+        <ItemList items={items} onItemChanged={handleItemChanged} />
+      )}
     </section>
   );
 };

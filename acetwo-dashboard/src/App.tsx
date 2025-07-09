@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
 
-import DashboardLayout from './layouts/DashboardLayout';
+import DashboardLayout from './layouts/dashboardLayout';
 import InventoryHome from './features/inventory/screens/InventoryHome';
 import ExpensesHome from './features/expenses/screens/ExpensesHome';
 

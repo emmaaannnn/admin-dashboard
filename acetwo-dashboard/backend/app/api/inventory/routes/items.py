@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from db.database import get_db
-from api.inventory.schemas.item import ItemCreate, ItemUpdate, ItemQuickEdit, ItemRead
-from api.inventory.services import item_service
+from app.db.database import get_db
+from app.api.inventory.schemas.item import ItemCreate, ItemUpdate, ItemQuickEdit, ItemRead
+from app.api.inventory.services import item_service
 from typing import List
 from uuid import UUID
 

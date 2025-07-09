@@ -1,14 +1,6 @@
 import React from "react";
 import ItemCard from "./ItemCard";
-
-export type Item = {
-  name: string;
-  effectivePrice: number;
-  imageUrls: string[];
-  isAvailable: boolean;
-  isOutOfStock: boolean;
-  sizeQuantities: Record<string, number>;
-};
+import type { Item } from "../types/itemTypes";
 
 type ItemListProps = {
   items: Item[];

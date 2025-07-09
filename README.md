@@ -93,9 +93,9 @@ npm run dev  # Starts dev server on localhost:5173
 ```bash
 cd backend
 python3 -m venv venv
-source venv/bin/activate
+.\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-uvicorn main:app --reload
+uvicorn app.main:app --reload
 ```
 
 # Recreating SQLite Database

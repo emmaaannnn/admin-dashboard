@@ -1,8 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from db.database import get_db
-from schemas.history import InventoryHistoryCreate, InventoryHistoryOut, InventoryHistoryUpdate
-from services import history_service
+from app.db.database import get_db
+from app.api.inventory.schemas.history import (
+    InventoryHistoryCreate,
+    InventoryHistoryOut,
+    InventoryHistoryUpdate,
+)
+from app.api.inventory.services import history_service
 from uuid import UUID
 
 router = APIRouter(prefix="/history", tags=["Inventory History"])
