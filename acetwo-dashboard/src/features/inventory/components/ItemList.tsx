@@ -9,7 +9,7 @@ type ItemListProps = {
 
 const ItemList: React.FC<ItemListProps> = ({ items, onItemChanged }) => {
   return (
-    <div style={{ padding: 12, overflowY: "auto", maxHeight: "100vh" }}>
+    <div className="item-list">
       {items.map((item, index) => (
         <ItemCard key={index} item={item} onChanged={onItemChanged} />
       ))}

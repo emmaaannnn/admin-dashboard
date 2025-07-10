@@ -32,74 +32,50 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
   };
 
   return (
-    <div style={{ height: 120, margin: "8px 0" }}>
-      <div style={{ display: "flex", padding: 12, border: "1px solid #ddd", borderRadius: 8 }}>
+    <div className="item-card-container">
+      <div className="item-card">
         {/* Image */}
         <div
+          className="item-image"
           style={{
-            width: 80,
-            height: 80,
-            borderRadius: 8,
             backgroundImage: `url(${item.image_urls[0]})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundColor: "#eee",
           }}
         />
 
-        <div style={{ width: 12 }} />
-
         {/* Name, Price, Quantity */}
-        <div style={{ flex: 3, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-          <div style={{ fontSize: 16, fontWeight: "bold" }}>{item.name}</div>
-          <div style={{ marginTop: 6 }}>Price: ${item.display_price.toFixed(2)}</div>
-          <div>Qty: {totalQuantity}</div>
+        <div className="item-info">
+          <div className="item-name">{item.name}</div>
+          <div className="item-price">Price: ${item.display_price.toFixed(2)}</div>
+          <div className="item-quantity">Qty: {totalQuantity}</div>
         </div>
 
-        <div style={{ width: 12 }} />
-
         {/* Availability */}
-        <div style={{ width: 100, textAlign: "center", alignSelf: "center" }}>
+        <div className="item-availability">
           {item.is_out_of_stock ? (
-            <span style={{ color: "red", fontWeight: 600 }}>Out of Stock</span>
+            <span className="out-of-stock">Out of Stock</span>
           ) : (
             <select
               value={availabilityStatus}
               onChange={handleAvailabilityChange}
-              style={{ fontWeight: 600 }}
+              className="availability-select"
             >
-              <option value="Available" style={{ color: "green" }}>
-                Available
-              </option>
-              <option value="Hidden" style={{ color: "blue" }}>
-                Hidden
-              </option>
+              <option value="Available">Available</option>
+              <option value="Hidden">Hidden</option>
             </select>
           )}
         </div>
 
-        <div style={{ width: 12 }} />
-
         {/* Size/Quantity Controls */}
-        <div style={{ flex: 4, display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "flex-end" }}>
+        <div className="size-quantity-wrapper">
           {Object.entries(localQuantities).map(([size, qty]) => (
-            <div
-              key={size}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                padding: "4px 8px",
-                backgroundColor: "#f5f5f5",
-                borderRadius: 16,
-              }}
-            >
+            <div className="size-quantity-control" key={size}>
               <span>{size}: </span>
               <input
                 type="number"
                 min={0}
                 value={qty}
                 onChange={(e) => updateQuantity(size, Math.max(0, parseInt(e.target.value) || 0))}
-                style={{ width: 30, textAlign: "center", margin: "0 4px" }}
+                className="quantity-input"
               />
             </div>
           ))}

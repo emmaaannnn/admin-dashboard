@@ -14,8 +14,7 @@ app = FastAPI(
 
 # Allow frontend during dev
 origins = [
-    "http://localhost:3000",  # React frontend default
-    "http://127.0.0.1:3000",
+    "http://localhost:5173",  # React frontend default
 ]
 
 app.add_middleware(

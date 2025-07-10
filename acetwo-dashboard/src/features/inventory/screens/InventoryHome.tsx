@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+
 import ItemList from '../components/ItemList';
 import { getItems } from '../api/getItems';
 import type { Item } from '../types/itemTypes';
+
+import '/src/styles/inventory/inventoryHome.css';
 
 const InventoryHome: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
@@ -43,7 +46,9 @@ const InventoryHome: React.FC = () => {
       {loading ? (
         <p>Loading items...</p>
       ) : (
-        <ItemList items={items} onItemChanged={handleItemChanged} />
+        <div className="item-list-container">
+          <ItemList items={items} onItemChanged={handleItemChanged} />
+        </div>
       )}
     </section>
   );
