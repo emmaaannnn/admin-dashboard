@@ -4,7 +4,7 @@ from uuid import UUID
 from datetime import datetime
 
 class InventoryHistoryBase(BaseModel):
-    item_id: UUID
+    item_id: str
     size: str
     quantity_changed: int
     reason: str
@@ -20,8 +20,8 @@ class InventoryHistoryUpdate(BaseModel):
     note: Optional[str] = None
 
 class InventoryHistoryOut(InventoryHistoryBase):
-    id: UUID
+    id: int  # ← autoincrement integer, not UUID
     timestamp: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True

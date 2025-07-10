@@ -40,14 +40,16 @@ class ItemCreate(ItemBase):
 
 # Read Schema
 class ItemRead(ItemBase):
-    id: str
+    base_id: str  # Use this instead of `id`
+    sizes: List[str]
+    size_ids: Dict[str, str]
     last_updated: datetime
     display_price: float  # Most common price
     is_on_sale: bool
     is_out_of_stock: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True  # For Pydantic v2
 
     # Picks price that is most common for display purposes
     @staticmethod

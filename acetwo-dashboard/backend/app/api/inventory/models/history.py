@@ -21,12 +21,14 @@ class InventoryRemoveReason(PyEnum):
 class InventoryHistory(Base):
     __tablename__ = "inventory_history"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    item_id = Column(UUID(as_uuid=True), ForeignKey("items.id"), nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    
+    item_id = Column(String, nullable=False)        # size-specific id, e.g. "DEFH01001"
+    base_id = Column(String, ForeignKey("items.base_id"), nullable=False)
+    
     timestamp = Column(DateTime, default=datetime.utcnow, index=True)
-    size = Column(String, nullable=False)
     quantity_changed = Column(Integer, nullable=False)
-    reason = Column(String, nullable=False)  # You may later use Enum or validate this in schema
-    note = Column(String)
+    reason = Column(String, nullable=False)
+    note = Column(String, nullable=True)
 
     item = relationship("Item", back_populates="history")

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.db.database import get_db
+from app.db.session import get_db
 from app.api.inventory.schemas.item import ItemCreate, ItemUpdate, ItemQuickEdit, ItemRead
 from app.api.inventory.services import item_service
 from typing import List

@@ -89,24 +89,25 @@ npm run dev  # Starts dev server on localhost:5173
 ```
 
 ### Backend (FastAPI)
-# Optional backend folder setup
+# Run backend
 ```bash
-cd backend
-python3 -m venv venv
+cd acetwo-dashboard/backend
 .\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-# Recreating SQLite Database
+# Optional: Recreating SQLite Database
 ``` bash
 rm dev.db
 python
->>> from db.database import Base, engine
->>> from api.inventory.models.item import Item
->>> from api.inventory.models.history import InventoryHistory
->>> Base.metadata.create_all(bind=engine)
->>> exit()
+
+from app.db.database import Base, engine
+from app.api.inventory.models.item import Item
+from app.api.inventory.models.history import InventoryHistory
+Base.metadata.create_all(bind=engine)
+
+exit()
 ```
 
 ## 📌 Deployment Plan
