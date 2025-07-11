@@ -44,31 +44,28 @@ class Item(Base):
         self.size_quantities = {s: 0 for s in self.sizes}
         self.size_prices = {s: 0.0 for s in self.sizes}
 
-    # Returns the final sale price for a given size, considering various discount strategies
-    def get_final_price_for_size(self, size: str) -> float:
-        size = size.upper()
-        base_price = self.size_prices.get(size)
-        if base_price is None:
-            return 0.0
+    # Computes sale prices and percentages based on the current size prices
+    def compute_sale_fields(self):
+        # Compute size_sale_prices if missing but percents are present
+        if self.size_sale_percents and not self.size_sale_prices:
+            self.size_sale_prices = {
+                size: round(self.size_prices.get(size, 0.0) * (1 - percent / 100), 2)
+                for size, percent in self.size_sale_percents.items()
+            }
 
-        # size-specific final sale price
-        if size in self.size_sale_prices:
-            return self.size_sale_prices[size]
-        # size-specific sale percent
-        if size in self.size_sale_percents:
-            percent = self.size_sale_percents[size]
-            return round(base_price * (1 - percent / 100), 2)
-        # global sale price
-        if self.sale_price is not None:
-            return self.sale_price
-        # global sale percent
-        if self.sale_percent:
-            return round(base_price * (1 - self.sale_percent / 100), 2)
-        # No sale
-        return base_price
+        # Compute size_sale_percents if missing but prices are present
+        if self.size_sale_prices and not self.size_sale_percents:
+            self.size_sale_percents = {
+                size: round((1 - self.size_sale_prices.get(size, 0.0) / self.size_prices.get(size, 1.0)) * 100, 2)
+                for size in self.size_sale_prices
+            }
+
 
     # Normalizes all size-related attributes to uppercase for consistency
     def normalize_sizes_for_item(self):
+
+        self.compute_sale_fields()
+
         # Uppercase and assign back
         self.sizes = [size.upper() for size in self.sizes or []]
 
@@ -99,9 +96,6 @@ class Item(Base):
     size_sale_prices = Column(JSON, default=dict)            # {"S": 39.99, "M": 44.99}
     size_sale_percents = Column(JSON, default=dict)          # {"S": 10, "M": 15}
 
-    sale_price = Column(Float, nullable=True)              # Global flat price
-    sale_percent = Column(Float, nullable=True)            # Global percent (e.g. 20 = 20%)
-
     is_available = Column(Boolean, default=True)
     is_archived = Column(Boolean, default=False)
     image_urls = Column(JSON, default=default_image_urls)
@@ -117,19 +111,33 @@ class Item(Base):
     # Indicates if the item is on sale based on sale price or size-specific discounts
     @property
     def is_on_sale(self):
-        return bool(self.sale_price) or bool(self.size_sale_prices)
+        return any(price > 0 for price in self.size_sale_prices.values()) or \
+            any(percent > 0 for percent in self.size_sale_percents.values())
 
     # Indicates if the item is available for purchase (Checks stock)
     @property
     def is_out_of_stock(self):
         return not self.size_quantities or all(qty == 0 for qty in self.size_quantities.values())
     
-    # Returns the price majority which will be used for display purposes
+    # Returns the highest price for a given size
     @property
     def display_price(self) -> float:
-        from collections import Counter
-        prices = [self.get_final_price_for_size(s) for s in self.sizes]
-        if not prices:
+        if not self.size_prices:
             return 0.0
-        freq = Counter(prices)
-        return freq.most_common(1)[0][0]
+        return max(self.size_prices.values(), default=0.0)
+    
+    # Returns the highest sale price (lowest discount) across all sizes
+    @property
+    def display_sale_price(self) -> float:
+        if not self.size_sale_prices:
+            return 0.0
+        prices = [price for price in self.size_sale_prices.values() if price > 0]
+        return max(prices) if prices else 0.0
+
+    # Returns the smallest percent discount (i.e. highest sale price)
+    @property
+    def display_sale_percent(self) -> float:
+        if not self.size_sale_percents:
+            return 0.0
+        percents = [p for p in self.size_sale_percents.values() if p > 0]
+        return min(percents) if percents else 0.0

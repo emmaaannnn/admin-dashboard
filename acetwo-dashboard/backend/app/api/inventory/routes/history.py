@@ -9,7 +9,7 @@ from app.api.inventory.schemas.history import (
 from app.api.inventory.services import history_service
 from uuid import UUID
 
-router = APIRouter(prefix="/history", tags=["Inventory History"])
+router = APIRouter(prefix="/inventory/history", tags=["Inventory History"])
 
 @router.post("/", response_model=InventoryHistoryOut)
 def add_history(entry: InventoryHistoryCreate, db: Session = Depends(get_db)):

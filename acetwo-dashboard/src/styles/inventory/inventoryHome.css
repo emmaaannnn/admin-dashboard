@@ -147,30 +147,36 @@
   padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  background-color: #fdfdfd;
   font-weight: 600;
-  color: #222;
-  appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='%23444' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 12px;
+  color: white;
   cursor: pointer;
-  transition: border-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.availability-select.available {
+  background-color: #12d400; /* green */
+}
+
+.availability-select.hidden {
+  background-color: #0078d4; /* blue */
 }
 
 .availability-select:hover {
-  border-color: #12d400;
+  border-color: #000;
 }
 
 .out-of-stock {
-  color: #d40e00;
+  padding: 6px 12px;
+  border-radius: 6px;
   font-weight: 600;
   font-size: 13px;
+  color: white;
+  background-color: #d40e00;
 }
 
 /* 2nd Item info block */
 .item-info-2 {
+  margin-left: 20px;
   min-width: 160px;
   flex-shrink: 0;
   display: flex;

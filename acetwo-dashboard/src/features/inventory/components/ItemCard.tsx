@@ -56,7 +56,11 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
             <select
               value={availabilityStatus}
               onChange={handleAvailabilityChange}
-              className="availability-select"
+              className={`availability-select ${
+                availabilityStatus === "Available"
+                  ? "available"
+                  : "hidden"
+              }`} 
             >
               <option value="Available">Available</option>
               <option value="Hidden">Hidden</option>

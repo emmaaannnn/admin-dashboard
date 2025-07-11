@@ -4,7 +4,7 @@ from typing import Dict, List, Optional
 from datetime import datetime
 from collections import Counter
 
-# Enum 
+# Enum for clothing types
 class ClothingType(str, Enum):
     tshirt = "T Shirt"
     pants = "Pants"
@@ -25,9 +25,6 @@ class ItemBase(BaseModel):
     size_sale_prices: Optional[Dict[str, float]] = None
     size_sale_percents: Optional[Dict[str, float]] = None
 
-    sale_price: Optional[float] = None
-    sale_percent: Optional[float] = None
-
     is_available: bool = True
     is_archived: bool = False
     image_urls: List[str] = Field(default_factory=list)
@@ -44,26 +41,23 @@ class ItemRead(ItemBase):
     sizes: List[str]
     size_ids: Dict[str, str]
     last_updated: datetime
-    display_price: float  # Most common price
+    
+    display_price: float
+    display_sale_price: float
+    display_sale_percent: float
+
     is_on_sale: bool
     is_out_of_stock: bool
 
     class Config:
         from_attributes = True  # For Pydantic v2
 
-    # Picks price that is most common for display purposes
-    @staticmethod
-    def compute_display_price(size_prices: Dict[str, float]) -> float:
-        from collections import Counter
-        if not size_prices:
-            return 0.0
-        freq = Counter(size_prices.values())
-        return freq.most_common(1)[0][0]  # Most common price
-
     @classmethod
     def from_orm(cls, obj):
         base = super().from_orm(obj)
-        base.display_price = cls.compute_display_price(base.size_prices)
+        base.display_price = obj.display_price
+        base.display_sale_price = obj.display_sale_price
+        base.display_sale_percent = obj.display_sale_percent
         base.is_on_sale = obj.is_on_sale
         base.is_out_of_stock = obj.is_out_of_stock
         return base
@@ -78,9 +72,6 @@ class ItemUpdate(BaseModel):
 
     size_sale_prices: Optional[Dict[str, float]] = None
     size_sale_percents: Optional[Dict[str, float]] = None
-
-    sale_price: Optional[float] = None
-    sale_percent: Optional[float] = None
 
     is_available: Optional[bool] = None
     is_archived: Optional[bool] = None

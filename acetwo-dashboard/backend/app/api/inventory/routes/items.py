@@ -6,7 +6,7 @@ from app.api.inventory.services import item_service
 from typing import List
 from uuid import UUID
 
-router = APIRouter(prefix="/items", tags=["Items"])
+router = APIRouter(prefix="/inventory/items", tags=["Items"])
 
 @router.get("/", response_model=List[ItemRead])
 def get_items(db: Session = Depends(get_db)):
