@@ -13,6 +13,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
   const [localQuantities, setLocalQuantities] = useState<Record<string, number>>(
     { ...item.size_quantities }
   );
+  const [clothingType, setClothingType] = useState(item.clothing_type);
 
   const totalQuantity = Object.values(localQuantities).reduce(
     (acc, qty) => acc + qty,
@@ -37,12 +38,10 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
         {/* Image */}
         <div
           className="item-image"
-          style={{
-            backgroundImage: `url(${item.image_urls[0]})`,
-          }}
+          style={{ backgroundImage: `url(${item.image_urls[0]})` }}
         />
 
-        {/* Name, Price, Quantity */}
+        {/* Info 1 */}
         <div className="item-info">
           <div className="item-name">{item.name}</div>
           <div className="item-price">Price: ${item.display_price.toFixed(2)}</div>
@@ -65,7 +64,32 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
           )}
         </div>
 
-        {/* Size/Quantity Controls */}
+        {/* Info 2 */}
+        <div className="item-info-2">
+          <div className="item-base-id">{item.base_id}</div>
+          <div className="item-type">
+            <label htmlFor={`clothing-type-${item.base_id}`}>Type: </label>
+            <select
+              id={`clothing-type-${item.base_id}`}
+              value={clothingType}
+              onChange={(e) => {
+                setClothingType(e.target.value as Item["clothing_type"]);
+                onChanged?.();
+              }}
+              className="type-select"
+            >
+              <option value="T Shirt">T Shirt</option>
+              <option value="Pants">Pants</option>
+              <option value="Shorts">Shorts</option>
+              <option value="Outerwear">Outerwear</option>
+              <option value="Hoodie">Hoodie</option>
+              <option value="Jumper">Jumper</option>
+              <option value="Accessories">Accessories</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Size/Quantity - aligned far right */}
         <div className="size-quantity-wrapper">
           {Object.entries(localQuantities).map(([size, qty]) => (
             <div className="size-quantity-control" key={size}>
@@ -74,7 +98,9 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
                 type="number"
                 min={0}
                 value={qty}
-                onChange={(e) => updateQuantity(size, Math.max(0, parseInt(e.target.value) || 0))}
+                onChange={(e) =>
+                  updateQuantity(size, Math.max(0, parseInt(e.target.value) || 0))
+                }
                 className="quantity-input"
               />
             </div>
@@ -82,6 +108,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
         </div>
       </div>
     </div>
+
   );
 };
 

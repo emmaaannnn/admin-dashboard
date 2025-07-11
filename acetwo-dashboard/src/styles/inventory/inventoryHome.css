@@ -1,6 +1,6 @@
 /* Layout anchor after navigation bar */
 .inventory-home {
-  margin-left: 180px;
+  margin-left: 200px;
   padding: 24px;
   box-sizing: border-box;
   font-family: 'Segoe UI', sans-serif;
@@ -8,10 +8,18 @@
 }
 
 /* Dashboard heading */
-.inventory-home h2 {
+.inventory-home h1 {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 16px;
+}
+
+.inventory-history {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #0078d4;
+  text-decoration: none;
 }
 
 /* Action buttons section */
@@ -21,7 +29,7 @@
   margin-bottom: 20px;
 }
 
-.inventory-button {
+.add-button {
   padding: 8px 16px;
   background-color: #0078d4;
   color: white;
@@ -31,8 +39,38 @@
   transition: background-color 0.2s ease-in-out;
 }
 
-.inventory-button:hover {
+.add-button:hover {
   background-color: #005ea2;
+}
+
+.discard-button {
+  padding: 8px 16px;
+  background-color: #d40e00;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.discard-button:hover {
+  background-color: #a20000;
+}
+
+.save-button {
+  padding: 8px 16px;
+  background-color: #12d400;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.save-button:hover {
+  background-color: #0a9e00;
 }
 
 /* Item List container */
@@ -51,70 +89,144 @@
 
 .item-card {
   display: flex;
-  padding: 16px;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: #fff;
-  align-items: center;
+  gap: 12px;
+  width: 100%;
 }
 
 /* Image preview */
 .item-image {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
   border-radius: 8px;
   background-size: cover;
   background-position: center;
   background-color: #eee;
 }
 
-/* Item info block */
+/* 1st Item info block */
 .item-info {
-  flex: 3;
+  min-width: 160px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left: 12px;
+  gap: 2px;
 }
 
 .item-name {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
 }
 
 .item-price {
-  margin-top: 6px;
+  font-size: 13px;
 }
 
 .item-quantity {
-  margin-top: 2px;
+  font-size: 13px;
 }
 
 /* Availability selector */
 .item-availability {
-  width: 100px;
-  text-align: center;
-}
-
-.out-of-stock {
-  color: red;
-  font-weight: 600;
+  min-width: 100px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .availability-select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fdfdfd;
   font-weight: 600;
-  width: 100%;
-  padding: 4px;
+  color: #222;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23444' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease-in-out;
 }
 
-/* Size / Quantity controls */
+.availability-select:hover {
+  border-color: #12d400;
+}
+
+.out-of-stock {
+  color: #d40e00;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* 2nd Item info block */
+.item-info-2 {
+  min-width: 160px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* Base ID styling (pill-like) */
+.item-base-id {
+  font-size: 12px;
+  font-weight: 600;
+  background-color: #222;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-block;
+  width: fit-content;
+}
+
+/* Type dropdown styling */
+.item-type {
+  font-size: 13px;
+  color: #444;
+}
+
+.item-type select {
+  margin-left: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fdfdfd;
+  color: #333;
+  font-weight: 500;
+  font-size: 13px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23444' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease-in-out;
+}
+
+.item-type select:hover {
+  border-color: #0078d4;
+}
+
+/* Size / Quantity controls (aligned far right) */
 .size-quantity-wrapper {
-  flex: 4;
+  margin-left: auto;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
-  margin-left: 12px;
+  flex-grow: 1;
 }
 
 .size-quantity-control {

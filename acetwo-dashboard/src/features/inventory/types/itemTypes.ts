@@ -8,9 +8,12 @@ export type ClothingType =
   | "Accessories";
 
 export interface Item {
-  id: string;
+  base_id: string;
   name: string;
   description?: string;
+
+  sizes: string[];
+  size_ids: Record<string, string>;
 
   size_quantities: Record<string, number>;
   size_prices: Record<string, number>;
@@ -24,7 +27,7 @@ export interface Item {
   is_available: boolean;
   is_archived: boolean;
   image_urls: string[];
-  last_updated: string; // ISO string (e.g., "2024-01-01T12:00:00Z")
+  last_updated: string;
   collection?: string;
   clothing_type: ClothingType;
 

@@ -10,36 +10,56 @@ import '/src/styles/inventory/inventoryHome.css';
 const InventoryHome: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // Fetch items from the API when the component mounts
+  const fetchItems = async () => {
+    try {
+      const data = await getItems();
+      setItems(data);
+      setHasUnsavedChanges(false); // Reset changes when re-fetching
+    } catch (error) {
+      console.error("Failed to fetch items:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const data = await getItems();
-        setItems(data);
-      } catch (error) {
-        console.error("Failed to fetch items:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchItems();
   }, []);
 
 
   const handleItemChanged = () => {
     console.log("An item was changed.");
-    // You can set state here or trigger a save in the future
+    setHasUnsavedChanges(true);
+  };
+
+  const discardChanges = async () => {
+    setLoading(true);
+    await fetchItems(); // Re-fetch items from DB
+  };
+
+  const saveChanges = () => {
+    // TODO: Implement your save logic here (e.g. send updated items to backend)
+    console.log("Saving changes...");
+    setHasUnsavedChanges(false);
   };
 
   return (
     <section className="inventory-home">
-      <h2>📦 Inventory Dashboard</h2>
+      <h1>📦 Inventory Dashboard</h1>
+      <Link to="/inventory/history" className="inventory-history">📜 Inventory History</Link>
 
       <div className="inventory-actions">
-        <Link to="/inventory/new" className="inventory-button">➕ Add New Item</Link>
-        <Link to="/inventory/history" className="inventory-button">📜 Inventory History</Link>
-        <Link to="/inventory/save-changes" className="inventory-button">💾 Save Changes</Link>
+        {hasUnsavedChanges ? (
+          <>
+            <button className="discard-button" onClick={discardChanges}>🗑️ Discard Changes</button>
+            <button className="save-button" onClick={saveChanges}>💾 Save Changes</button>
+          </>
+        ) : (
+          <Link to="/inventory/new" className="add-button">➕ Add New Item</Link>
+        )}
       </div>
 
       {/* Item List */}
