@@ -57,6 +57,7 @@ Build a secure, scalable internal platform to manage and monitor all core busine
 ---
 
 ## 🗂️ Project Structure (Planned)
+```
 acetwo-admin/
 ├── public/ # Static assets
 ├── src/
@@ -71,8 +72,8 @@ acetwo-admin/
 │ └── ...
 ├── README.md # You are here
 └── package.json # Project config
+```
 
----
 
 ## 🔧 Setup & Development
 ### Prerequisites
