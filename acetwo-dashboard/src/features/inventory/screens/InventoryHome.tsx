@@ -48,10 +48,13 @@ const InventoryHome: React.FC = () => {
 
   return (
     <section className="inventory-home">
-      <h1>📦 Inventory Dashboard</h1>
-      <Link to="/inventory/history" className="inventory-history">📜 Inventory History</Link>
+      <div className="inventory-header-row">
+        <h1>📦 Inventory Dashboard</h1>
+        <Link to="/inventory/history" className="inventory-history">📜 Inventory History</Link>
+        <div className="inventory-header-spacer" />
+      </div>
 
-      <div className="inventory-actions">
+      <div className="inventory-actions-row">
         {hasUnsavedChanges ? (
           <>
             <button className="discard-button" onClick={discardChanges}>🗑️ Discard Changes</button>

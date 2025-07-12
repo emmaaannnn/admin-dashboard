@@ -97,16 +97,32 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
         <div className="size-quantity-wrapper">
           {Object.entries(localQuantities).map(([size, qty]) => (
             <div className="size-quantity-control" key={size}>
-              <span>{size}: </span>
-              <input
-                type="number"
-                min={0}
-                value={qty}
-                onChange={(e) =>
-                  updateQuantity(size, Math.max(0, parseInt(e.target.value) || 0))
-                }
-                className="quantity-input"
-              />
+              {/* Quantity control with custom buttons */}
+              <div className={`quantity-box ${qty === 0 ? 'out-of-stock' : ''}`}>
+
+                <span className="size-label">{size}</span>
+
+                <div className="quantity-controls">
+                  <button
+                    className="qty-btn up"
+                    onClick={() => updateQuantity(size, qty + 1)}
+                  >▲</button>
+
+                  <input
+                    type="number"
+                    value={qty}
+                    onChange={(e) =>
+                      updateQuantity(size, Math.max(0, parseInt(e.target.value) || 0))
+                    }
+                    className="quantity-input"
+                  />
+
+                  <button
+                    className="qty-btn down"
+                    onClick={() => updateQuantity(size, Math.max(0, qty - 1))}
+                  >▼</button>
+                </div>
+              </div>
             </div>
           ))}
         </div>
