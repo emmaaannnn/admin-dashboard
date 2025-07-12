@@ -58,28 +58,46 @@ Build a secure, scalable internal platform to manage and monitor all core busine
 
 ## 🗂️ Project Structure (Planned)
 ```
-acetwo-admin/
+acetwo-dashboard/
 ├── public/ # Static assets
 ├── src/
 │ ├── components/ # Reusable UI (buttons, inputs)
-│ ├── screens/ # Inventory, Expenses, Quotes
-│ ├── providers/ # React Context / Providers
-│ ├── api/ # Axios services or backend hooks
-│ ├── utils/ # Formatters, validators, helpers
+│ ├── features/
+│ │ ├── inventory/ (phase 1) 
+│ │ │ ├── api/
+│ │ │ ├── components/
+│ │ │ ├── screens/
+│ │ │ └── types/
+│ │ └── other phases sush as expenses/sales/
+│ ├── layouts/
+│ ├── routes/ 
+│ ├── styles/
 │ ├── App.tsx # Main app wrapper
 │ └── main.tsx # Entry point
-├── backend/ # (optional) FastAPI app folder
-│ └── ...
-├── README.md # You are here
+├── backend/ # FastAPI app folder
+│ ├── app/
+│ │ ├── api/
+│ │ │ ├── inventory/
+│ │ │ │ ├── models/
+│ │ │ │ ├── routes/
+│ │ │ │ ├── schemas/
+│ │ │ │ └── services/
+│ │ │ └── OTHER PHASES SUCH AS EXPENSES/SALES
+│ │ ├── db/
+│ │ ├── .env
+│ │ └── main.py
+│ ├── core/ 
+│ ├── venv/
+│ ├── dev.db 
+│ └── requirements.txt
 └── package.json # Project config
 ```
 
 
 ## 🔧 Setup & Development
 ### Prerequisites
-- Node.js 18+
 - Yarn or npm
-- Python 3.10+ (if using FastAPI)
+- Python 3.10+
 
 ### Frontend Setup
 ```bash
