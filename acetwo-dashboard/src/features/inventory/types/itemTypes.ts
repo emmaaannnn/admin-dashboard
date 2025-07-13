@@ -21,9 +21,6 @@ export interface Item {
   size_sale_prices?: Record<string, number>;
   size_sale_percents?: Record<string, number>;
 
-  sale_price?: number;
-  sale_percent?: number;
-
   is_available: boolean;
   is_archived: boolean;
   image_urls: string[];
@@ -33,5 +30,8 @@ export interface Item {
 
   is_on_sale: boolean;
   is_out_of_stock: boolean;
+  
   display_price: number;
+  display_sale_price: number;
+  display_sale_percent: number;
 }
