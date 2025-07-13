@@ -1,86 +1,86 @@
-import React from "react";
+import React, { useState } from "react";
 import type { Item } from "../types/itemTypes";
 
-type ItemListProps = {
-  items: Item[];
+type ItemInfoProps = {
+  item: Item;
 };
 
-const ItemInfo: React.FC = () => {
+const ItemInfo: React.FC<ItemInfoProps> = ({ item }) => {
+  const [mainImage, setMainImage] = useState(item.image_urls[0]);
+
+  const totalQuantity = Object.values(item.size_quantities).reduce(
+    (sum, qty) => sum + qty,
+    0
+  );
+
   return (
     <div className="inventory-home">
-      {/* Product Name */}
-      <h1 className="item-title">{product.name}</h1>
+      <h1 className="item-title">{item.name}</h1>
 
-      <div className="modal-body">
-          {/* Left: Main Image & Thumbnails & Item Description*/}
-          <div className="modal-image-container">
-              <Magnifier className="modal-main-image" imageSrc={mainImage} alt={product.name} />
-              <div className="thumbnail-row">
-                <img
-                  src={product.imageUrl}
-                  alt="Front view"
-                  onClick={() => setMainImage(product.imageUrl)}
-                  className={`thumbnail ${mainImage === product.imageUrl ? "active" : ""}`}
-                />
-                <img
-                  src={product.imageUrl2}
-                  alt="Back view"
-                  onClick={() => setMainImage(product.imageUrl2)}
-                  className={`thumbnail ${mainImage === product.imageUrl2 ? "active" : ""}`}
-                />
-              </div>
-            
-            {/* Description */}
-            <div className="modal-description"> 
-              <h4>Description:</h4>
-              <p dangerouslySetInnerHTML={{ __html: product.description }}></p>  
-            </div>
+      <div className="left-info">
+        {/* Left Side */}
+        <div className="image-container">
+          <img className="main-image" src={mainImage} alt={item.name} />
+          <div className="thumbnail-row">
+            {item.image_urls.map((url, index) => (
+              <img
+                key={index}
+                src={url}
+                alt={`Thumbnail ${index + 1}`}
+                onClick={() => setMainImage(url)}
+                className={`thumbnail ${mainImage === url ? "active" : ""}`}
+              />
+            ))}
           </div>
 
-          {/* Right: Info */}
-          <div className="modal-info">
-            {/* Product Name */}
-            <h1 className="item-title">Name: {product.name}</h1>
+          {/* Description */}
+          <div className="description">
+            <h4>Description:</h4>
+            <p dangerouslySetInnerHTML={{ __html: item.description || "" }} />
+          </div>
+        </div>
 
-            {/* Price */}
-            <div className="modal-price">
-                {product.sale && product.salePrice ? (
-                    <>
-                    <span className="original-price">${product.price}</span>
-                    <span className="sale-price">${product.salePrice} <span className="sale-label">SALE</span></span>
-                    </>
-                ) : (
-                    <span>${product.price}</span>
-                )}
-            </div>
-
-            {/* Availability */}
-            {product.outOfStock ? (
-            <div className="modal-sizes">
-                <h4>Available Sizes:</h4>
-                <p className="modal-sold-out">SOLD OUT</p>
-            </div>
+        {/* Right Side */}
+        <div className="right-info">
+          {/* Price Section */}
+          <div className="price-section">
+            <h4>Price:</h4>
+            {item.is_on_sale ? (
+              <>
+                <span className="original-price">
+                  ${item.display_price.toFixed(2)}
+                </span>
+                <span className="sale-price">
+                  ${item.display_sale_price.toFixed(2)} (
+                  {item.display_sale_percent}% OFF)
+                </span>
+              </>
             ) : (
-            <div className="modal-sizes">
-                <h4>Available Sizes:</h4>
-                <div className="size-list">
-                    {product.availableSizes.map((size) => (
-                        <span key={size} className="size-pill">{size}</span>
-                    ))}
-                </div>
-            </div>
+              <span>${item.display_price.toFixed(2)}</span>
             )}
-
-            {/* Purchase Button & Close Button */}
-            <div className="modal-buttons">
-                <a href="https://www.instagram.com/4ce.two"
-                    target="_blank" rel="noopener noreferrer" className="purchase-button">
-                    Purchase via Instagram
-                </a>
-            </div>
           </div>
+
+          {/* Sizes and Quantities */}
+          <div className="size-section">
+            <h4>Sizes:</h4>
+            {item.sizes.map((size) => (
+              <div key={size} className="size-line">
+                {size}: {item.size_quantities[size]} in stock
+              </div>
+            ))}
+            <div>Total Quantity: {totalQuantity}</div>
+          </div>
+
+          {/* Other Info */}
+          <div className="other-info">
+            <div><strong>Collection:</strong> {item.collection || "N/A"}</div>
+            <div><strong>Clothing Type:</strong> {item.clothing_type}</div>
+            <div><strong>Available:</strong> {item.is_available ? "Yes" : "No"}</div>
+            <div><strong>Archived:</strong> {item.is_archived ? "Yes" : "No"}</div>
+            <div><strong>Last Updated:</strong> {new Date(item.last_updated).toLocaleString()}</div>
+          </div>
+        </div>
       </div>
-      <button onClick={onClose} className="close-button">Close</button>
     </div>
   );
 };

@@ -44,7 +44,20 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
         {/* Info 1 */}
         <div className="item-info">
           <div className="item-name">{item.name}</div>
-          <div className="item-price">Price: ${item.display_price.toFixed(2)}</div>
+          <div className="item-price">
+            {item.is_on_sale ? (
+              <>
+                <span style={{ textDecoration: 'line-through', color: '#888', marginRight: '8px' }}>
+                  ${item.display_price.toFixed(2)}
+                </span>
+                <span style={{ color: 'red', fontWeight: 'bold' }}>
+                  ${item.display_sale_price.toFixed(2)}
+                </span>
+              </>
+            ) : (
+              <>Price: ${item.display_price.toFixed(2)}</>
+            )}
+          </div>
           <div className="item-quantity">Qty: {totalQuantity}</div>
         </div>
 
@@ -92,6 +105,17 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
             </select>
           </div>
         </div>
+
+        {/* SALE Tag */}
+        <div className="SaleTag">
+          {item.is_on_sale ? (
+            <div className="sale-label">SALE</div>
+          ) : (
+            <div></div>
+          )}
+        </div>
+
+
 
         {/* Size/Quantity - aligned far right */}
         <div className="size-quantity-wrapper">
