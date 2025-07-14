@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import type { Item } from "../types/itemTypes";
 import ItemInfo from "../components/itemInfo";
 import "/src/styles/inventory/itemDetails.css"; // Assuming you have some styles for this component
@@ -31,9 +31,10 @@ const emptyItem: Item = {
 const ItemDetails: React.FC = () => {
   const { base_id } = useParams(); // From /inventory/:base_id
   const [item, setItem] = useState<Item | null>(null);
+  const navigate = useNavigate();
 
-  const discardChanges = () => {
-    console.log("Discarded");
+  const back = () => {
+    navigate(-1);
   };
 
   const saveChanges = () => {
@@ -45,11 +46,6 @@ const ItemDetails: React.FC = () => {
       // New item
       setItem(emptyItem);
     } else {
-      // Fetch existing item
-      fetch(`http://localhost:8000/items/${base_id}`)
-        .then((res) => res.json())
-        .then((data) => setItem(data))
-        .catch((err) => console.error("Failed to load item", err));
     }
   }, [base_id]);
 
@@ -62,10 +58,10 @@ const ItemDetails: React.FC = () => {
       </div>
 
       <div className="item-actions-row">
-        <button className="back-button" onClick={discardChanges}>
+        <button className="back-button" onClick={back}>
           Back
         </button>
-        <button className="button" onClick={saveChanges}>
+        <button className="save-button" onClick={saveChanges}>
           💾 Save Changes
         </button>
       </div>
