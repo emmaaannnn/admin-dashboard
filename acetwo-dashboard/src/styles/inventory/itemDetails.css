@@ -36,66 +36,48 @@
 .item-info-card {
   display: flex;
   flex-direction: row;
-  gap: 32px;
-  padding: 20px;
+  gap: 2rem;
+  padding: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #fff;
+  max-width: 1200px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   font-family: Arial, sans-serif;
-  background-color: #e9e9e9;
 }
 
-
-/* Left Info ----- Image & Description*/
-.left-info {
-  display: flex;
-  gap: 32px;
-}
-
+.left-info,
 .right-info {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1rem;
 }
 
-.name-row input {
-  width: 100%;
-  padding: 8px;
+/* ----- Left Side ----- */
+
+.name-section input {
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
   border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 16px;
+  width: 100%;
 }
 
-.main-image,
-.thumbnail {
-  width: 400px;
-  height: 400px;
-  object-fit: cover;
-  border: 1px solid #ccc;
+.main-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
   border-radius: 8px;
-  background-color: #f0f0f0;
-}
-
-.thumbnail {
-  width: 60px;
-  height: 60px;
-  margin: 4px;
-  cursor: pointer;
-}
-
-.main-image.placeholder,
-.thumbnail.placeholder {
-  background-color: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-  font-size: 14px;
-  content: "No Image";
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
 }
 
 .thumbnail-row {
   display: flex;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .thumbnail {
@@ -103,38 +85,124 @@
   height: 60px;
   object-fit: cover;
   border-radius: 4px;
+  border: 2px solid transparent;
   cursor: pointer;
-  opacity: 0.6;
+  transition: border-color 0.2s ease;
+}
+
+.thumbnail:hover {
+  border-color: #aaa;
 }
 
 .thumbnail.active {
-  opacity: 1;
-  border: 2px solid #0078d4;
+  border-color: #007bff;
 }
 
-.right-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.add-image-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  background-color: #f0f0f0;
+  border: 1px dashed #aaa;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  align-self: flex-start;
 }
 
 .description textarea {
-  width: 380px;
-  padding: 10px;
-  border-radius: 6px;
+  width: 100%;
+  padding: 0.6rem;
   border: 1px solid #ccc;
-  font-size: 14px;
+  border-radius: 6px;
   resize: vertical;
+  min-height: 100px;
 }
 
-.original-price {
-  text-decoration: line-through;
-  color: #888;
-  margin-right: 8px;
+/* ----- Right Side ----- */
+
+.id-section input,
+.price-section input,
+.other-info select {
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  margin-bottom: 0.5rem;
 }
 
-.sale-price {
-  color: red;
-  font-weight: bold;
+.size-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.size-line {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.size-line input {
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.toggle-sale {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.add-size-btn,
+.apply-price-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  width: fit-content;
+  margin-top: 0.5rem;
+}
+
+.add-size-btn:hover,
+.apply-price-btn:hover {
+  background-color: #0056b3;
+}
+
+.price-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.other-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.last-updated {
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 1rem;
+}
+
+/* ----- Responsive Layout ----- */
+@media (max-width: 768px) {
+  .item-info-card {
+    flex-direction: column;
+    padding: 1rem;
+  }
+
+  .size-line {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
