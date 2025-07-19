@@ -83,16 +83,27 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
 
   return (
     <div className="item-info-card">
-      {/* LEFT SIDE */}
-      <div className="left-info">
-        <div>
-          <h4>Name:</h4>
-          <input
-            type="text"
-            value={editableItem.name}
-            onChange={(e) => handleChange("name", e.target.value)}
-          />
-          <img className="main-image" src={mainImage} alt={editableItem.name} />
+      {/* NAME SECTION */}
+      <div className="name-section">
+        <h4>Name:</h4>
+            <input
+              type="text"
+              value={editableItem.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+            />
+      </div>
+      
+      <div className="info-body">
+        {/* LEFT SIDE */}
+        <div className="left-info">
+          <div className="main-image-container">
+            {mainImage ? (
+              <img className="main-image" src={mainImage} alt={editableItem.name} />
+            ) : (
+              <div className="main-image placeholder">No Image</div>
+            )}
+          </div>
+          
           <div className="thumbnail-row">
             {editableItem.image_urls.map((url, index) => (
               <img
@@ -104,7 +115,9 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
               />
             ))}
           </div>
+          
           <button className="add-image-btn">＋ Add Image</button>
+          
           <div className="description">
             <h4>Description:</h4>
             <textarea
@@ -113,154 +126,158 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
               onChange={(e) => handleChange("description", e.target.value)}
             />
           </div>
-        </div>
-      </div>
 
-      {/* RIGHT SIDE */}
-      <div className="right-info">
-        <div className="baseID-row">
-          <h4>ID:</h4> <input
-            type="text"
-            value={editableItem.base_id}
-            onChange={(e) => handleChange("base_id", e.target.value)}
-          />
-        </div>
-
-        <div className="size-section">
-          <h4>Sizes:</h4>
-          {editableItem.sizes.map((size, index) => (
-            <div key={size} className="size-line">
-              <input
-                type="text"
-                value={size}
-                onChange={(e) => handleSizeEdit(index, e.target.value)}
-              />
-              <input type="text" value={editableItem.size_ids[size] || ""} readOnly />
-              <input
-                type="number"
-                value={editableItem.size_prices[size] || 0}
-                onChange={(e) =>
-                  handleChange("size_prices", {
-                    ...editableItem.size_prices,
-                    [size]: parseFloat(e.target.value),
-                  })
-                }
-                placeholder="Price"
-              />
-              <input
-                type="number"
-                value={editableItem.size_sale_prices?.[size] || 0}
-                onChange={(e) =>
-                  handleChange("size_sale_prices", {
-                    ...editableItem.size_sale_prices,
-                    [size]: parseFloat(e.target.value),
-                  })
-                }
-                placeholder="Sale Price"
-              />
-              <input
-                type="number"
-                value={editableItem.size_sale_percents?.[size] || 0}
-                onChange={(e) =>
-                  handleChange("size_sale_percents", {
-                    ...editableItem.size_sale_percents,
-                    [size]: parseFloat(e.target.value),
-                  })
-                }
-                placeholder="Sale %"
-              />
-              <input
-                type="number"
-                value={editableItem.size_quantities[size] || 0}
-                onChange={(e) =>
-                  handleChange("size_quantities", {
-                    ...editableItem.size_quantities,
-                    [size]: parseInt(e.target.value),
-                  })
-                }
-                placeholder="Qty"
-              />
+          <div className="toggle-section">
+            <div className="available-select">
+              <select
+                value={editableItem.is_available.toString()}
+                onChange={(e) => handleChange("is_available", e.target.value === "true")}
+              >
+                <option value="true">Available</option>
+                <option value="false">Hidden</option>
+              </select>
             </div>
-          ))}
-          <button onClick={addSizeRow}>＋ Add Size</button>
+            <div className="archived-select">
+              <select
+                value={editableItem.is_archived.toString()}
+                onChange={(e) => handleChange("is_archived", e.target.value === "true")}
+              >
+                <option value="false">Active</option>
+                <option value="true">Archived</option>
+              </select>
+            </div>
+          </div> 
+          
         </div>
 
-        <div className="price-section">
-          <h4>Price:</h4>
-          <input
-            type="number"
-            value={editableItem.display_price}
-            onChange={(e) => {
-              handleChange("display_price", parseFloat(e.target.value));
-              updateAllPrices(parseFloat(e.target.value));
-            }}
-            placeholder="Display Price"
-          />
-          <h4>Sale Price:</h4>
-          <input
-            type="number"
-            value={editableItem.display_sale_price}
-            onChange={(e) => {
-              handleChange("display_sale_price", parseFloat(e.target.value));
-              updateAllSalePrices(parseFloat(e.target.value));
-            }}
-            placeholder="Display Sale Price"
-          />
-          <h4>Sale Percent:</h4>
-          <input
-            type="number"
-            value={editableItem.display_sale_percent}
-            onChange={(e) => {
-              handleChange("display_sale_percent", parseFloat(e.target.value));
-              updateAllSalePercents(parseFloat(e.target.value));
-            }}
-            placeholder="Display Sale %"
-          />
-        </div>
-
-        <div className="other-info">
-          <div>
-            <strong>Collection:</strong>
-            <input
-              value={editableItem.collection || ""}
-              onChange={(e) => handleChange("collection", e.target.value)}
+        {/* RIGHT SIDE */}
+        <div className="right-info">
+          <div className="id-section">
+            <h4>ID:</h4> <input
+              type="text"
+              value={editableItem.base_id}
+              onChange={(e) => handleChange("base_id", e.target.value)}
             />
           </div>
-          <div className="clothing-type-select">
-            <strong>Clothing Type:</strong>
-            <select
-              value={editableItem.clothing_type}
-              onChange={(e) =>
-                handleChange("clothing_type", e.target.value as Item["clothing_type"])
-              }
-            >
-              {clothingTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
+
+          <div className="size-section">
+            <h4>Sizes:</h4>
+            {editableItem.sizes.map((size, index) => (
+              <div key={size} className="size-line">
+                <input
+                  type="text"
+                  value={size}
+                  onChange={(e) => handleSizeEdit(index, e.target.value)}
+                />
+                <input type="text" value={editableItem.size_ids[size] || ""} readOnly />
+                <input
+                  type="number"
+                  value={editableItem.size_prices[size] || 0}
+                  onChange={(e) =>
+                    handleChange("size_prices", {
+                      ...editableItem.size_prices,
+                      [size]: parseFloat(e.target.value),
+                    })
+                  }
+                  placeholder="Price"
+                />
+                <input
+                  type="number"
+                  value={editableItem.size_sale_prices?.[size] || 0}
+                  onChange={(e) =>
+                    handleChange("size_sale_prices", {
+                      ...editableItem.size_sale_prices,
+                      [size]: parseFloat(e.target.value),
+                    })
+                  }
+                  placeholder="Sale Price"
+                />
+                <input
+                  type="number"
+                  value={editableItem.size_sale_percents?.[size] || 0}
+                  onChange={(e) =>
+                    handleChange("size_sale_percents", {
+                      ...editableItem.size_sale_percents,
+                      [size]: parseFloat(e.target.value),
+                    })
+                  }
+                  placeholder="Sale %"
+                />
+                <input
+                  type="number"
+                  value={editableItem.size_quantities[size] || 0}
+                  onChange={(e) =>
+                    handleChange("size_quantities", {
+                      ...editableItem.size_quantities,
+                      [size]: parseInt(e.target.value),
+                    })
+                  }
+                  placeholder="Qty"
+                />
+              </div>
+            ))}
+            <button onClick={addSizeRow}>＋ Add Size</button>
           </div>
-          <div className="available-select">
-            <select
-              value={editableItem.is_available.toString()}
-              onChange={(e) => handleChange("is_available", e.target.value === "true")}
-            >
-              <option value="true">Available</option>
-              <option value="false">Hidden</option>
-            </select>
+
+          <div className="price-section">
+            <h4>Price:</h4>
+            <input
+              type="number"
+              value={editableItem.display_price}
+              onChange={(e) => {
+                handleChange("display_price", parseFloat(e.target.value));
+                updateAllPrices(parseFloat(e.target.value));
+              }}
+              placeholder="Display Price"
+            />
+            <h4>Sale Price:</h4>
+            <input
+              type="number"
+              value={editableItem.display_sale_price}
+              onChange={(e) => {
+                handleChange("display_sale_price", parseFloat(e.target.value));
+                updateAllSalePrices(parseFloat(e.target.value));
+              }}
+              placeholder="Display Sale Price"
+            />
+            <h4>Sale Percent:</h4>
+            <input
+              type="number"
+              value={editableItem.display_sale_percent}
+              onChange={(e) => {
+                handleChange("display_sale_percent", parseFloat(e.target.value));
+                updateAllSalePercents(parseFloat(e.target.value));
+              }}
+              placeholder="Display Sale %"
+            />
           </div>
-          <div className="archived-select">
-            <select
-              value={editableItem.is_archived.toString()}
-              onChange={(e) => handleChange("is_archived", e.target.value === "true")}
-            >
-              <option value="false">Active</option>
-              <option value="true">Archived</option>
-            </select>
-          </div>
-          <div className="last-updated">
-            <strong>Last Updated:</strong> {new Date(editableItem.last_updated).toLocaleString()}
+
+          <div className="other-info">
+            <div>
+              <strong>Collection:</strong>
+              <input
+                value={editableItem.collection || ""}
+                onChange={(e) => handleChange("collection", e.target.value)}
+              />
+            </div>
+            <div className="clothing-type-select">
+              <strong>Clothing Type:</strong>
+              <select
+                value={editableItem.clothing_type}
+                onChange={(e) =>
+                  handleChange("clothing_type", e.target.value as Item["clothing_type"])
+                }
+              >
+                {clothingTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="last-updated">
+              <strong>Last Updated:</strong> {new Date(editableItem.last_updated).toLocaleString()}
+            </div>
           </div>
         </div>
       </div>
