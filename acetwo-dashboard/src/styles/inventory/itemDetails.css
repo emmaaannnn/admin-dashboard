@@ -35,18 +35,47 @@
 /* Item Details Section */
 .item-info-card {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 2rem;
   padding: 2rem;
   border: 1px solid #ddd;
   border-radius: 12px;
   background-color: #fff;
-  max-width: 1200px;
+  max-width: 100%;
   margin: 2rem auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   font-family: Arial, sans-serif;
 }
 
+/* Name section at the top */
+.name-section {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.name-section h4 {
+  margin: 0;
+  white-space: nowrap;
+  font-size: 2rem;
+}
+
+.name-section input {
+  flex: 1;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Split view under name section */
+.info-body {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+}
+
+/* Left and Right Panel Structure */
 .left-info,
 .right-info {
   flex: 1;
@@ -56,24 +85,31 @@
 }
 
 /* ----- Left Side ----- */
-
-.name-section input {
-  padding: 0.6rem;
-  font-size: 1rem;
+.main-image-container {
+  width: 500px;
+  height: 500px;
+  background-color: #f8f8f8;
   border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 100%;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
 }
 
 .main-image {
   width: 100%;
-  max-height: 300px;
+  height: 100%;
   object-fit: contain;
-  border-radius: 8px;
-  background-color: #f8f8f8;
-  border: 1px solid #ccc;
 }
 
+.main-image.placeholder {
+  color: #aaa;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+/* Thumbnails */
 .thumbnail-row {
   display: flex;
   gap: 0.5rem;
@@ -98,6 +134,7 @@
   border-color: #007bff;
 }
 
+/* Add Image Button */
 .add-image-btn {
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
@@ -105,12 +142,12 @@
   border: 1px dashed #aaa;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 0.5rem;
   align-self: flex-start;
 }
 
+/* Description */
 .description textarea {
-  width: 100%;
+  width: 97%;
   padding: 0.6rem;
   border: 1px solid #ccc;
   border-radius: 6px;
@@ -118,91 +155,28 @@
   min-height: 100px;
 }
 
-/* ----- Right Side ----- */
-
-.id-section input,
-.price-section input,
-.other-info select {
-  padding: 0.6rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 100%;
-  margin-bottom: 0.5rem;
-}
-
-.size-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  margin-bottom: 1rem;
-}
-
-.size-line {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 0.5rem;
-  align-items: center;
-}
-
-.size-line input {
-  padding: 0.5rem;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.toggle-sale {
+/* Toggle Info */
+.toggle-section {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.85rem;
+  flex-direction: row;
 }
 
-.add-size-btn,
-.apply-price-btn {
+.toggle-section select {
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
-  border: none;
-  background-color: #007bff;
-  color: white;
+  background-color: #f0f0f0;
+  border: 1px dashed #aaa;
   border-radius: 6px;
   cursor: pointer;
-  width: fit-content;
-  margin-top: 0.5rem;
 }
 
-.add-size-btn:hover,
-.apply-price-btn:hover {
-  background-color: #0056b3;
-}
+/* ----- Right Side ----- */
 
-.price-section {
+.id-section {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-direction: row;
 }
 
-.other-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
 
-.last-updated {
-  font-size: 0.85rem;
-  color: #777;
-  margin-top: 1rem;
-}
-
-/* ----- Responsive Layout ----- */
-@media (max-width: 768px) {
-  .item-info-card {
-    flex-direction: column;
-    padding: 1rem;
-  }
-
-  .size-line {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
