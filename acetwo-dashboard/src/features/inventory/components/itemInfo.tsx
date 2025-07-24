@@ -19,6 +19,12 @@ type ItemInfoProps = {
 const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
   const [editableItem, setEditableItem] = useState<Item>({ ...item });
   const [mainImage, setMainImage] = useState(editableItem.image_urls[0]);
+  const [availabilityStatus, setAvailabilityStatus] = useState(
+    item.is_available ? "Available" : "Hidden"
+  );
+  const [archivedStatus, setArchivedStatus] = useState(
+    item.is_archived ? "Active" : "Archived"
+  );
 
   const handleChange = <K extends keyof Item>(key: K, value: Item[K]) => {
     const updated = { ...editableItem, [key]: value };
@@ -75,6 +81,18 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
     handleChange("size_sale_prices", updated);
   };
 
+  const handleAvailabilityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newValue = e.target.value;
+    if (newValue === availabilityStatus) return;
+    setAvailabilityStatus(newValue);
+  };
+
+  const handleArchivedChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newValue = e.target.value;
+    if (newValue === archivedStatus) return;
+    setArchivedStatus(newValue);
+  };
+
   const updateAllSalePercents = (percent: number) => {
     const updated = { ...editableItem.size_sale_percents };
     editableItem.sizes.forEach(size => (updated[size] = percent));
@@ -128,22 +146,32 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
           </div>
 
           <div className="toggle-section">
-            <div className="available-select">
+            <div>
               <select
-                value={editableItem.is_available.toString()}
-                onChange={(e) => handleChange("is_available", e.target.value === "true")}
+                value={availabilityStatus}
+                onChange={handleAvailabilityChange}
+                className={`available-select ${
+                  availabilityStatus === "Available"
+                    ? "available"
+                    : "hidden"
+                }`} 
               >
-                <option value="true">Available</option>
-                <option value="false">Hidden</option>
+                <option value="Available">Available</option>
+                <option value="Hidden">Hidden</option>
               </select>
             </div>
-            <div className="archived-select">
+            <div>
               <select
-                value={editableItem.is_archived.toString()}
-                onChange={(e) => handleChange("is_archived", e.target.value === "true")}
+                value={archivedStatus}
+                onChange={handleArchivedChange}
+                className={`archive-select ${
+                  archivedStatus === "Active" 
+                    ? "active" 
+                    : "archived"
+                }`}
               >
-                <option value="false">Active</option>
-                <option value="true">Archived</option>
+                <option value="Active">Active</option>
+                <option value="Archived">Archived</option>
               </select>
             </div>
           </div> 
@@ -160,65 +188,6 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
             />
           </div>
 
-          <div className="size-section">
-            <h4>Sizes:</h4>
-            {editableItem.sizes.map((size, index) => (
-              <div key={size} className="size-line">
-                <input
-                  type="text"
-                  value={size}
-                  onChange={(e) => handleSizeEdit(index, e.target.value)}
-                />
-                <input type="text" value={editableItem.size_ids[size] || ""} readOnly />
-                <input
-                  type="number"
-                  value={editableItem.size_prices[size] || 0}
-                  onChange={(e) =>
-                    handleChange("size_prices", {
-                      ...editableItem.size_prices,
-                      [size]: parseFloat(e.target.value),
-                    })
-                  }
-                  placeholder="Price"
-                />
-                <input
-                  type="number"
-                  value={editableItem.size_sale_prices?.[size] || 0}
-                  onChange={(e) =>
-                    handleChange("size_sale_prices", {
-                      ...editableItem.size_sale_prices,
-                      [size]: parseFloat(e.target.value),
-                    })
-                  }
-                  placeholder="Sale Price"
-                />
-                <input
-                  type="number"
-                  value={editableItem.size_sale_percents?.[size] || 0}
-                  onChange={(e) =>
-                    handleChange("size_sale_percents", {
-                      ...editableItem.size_sale_percents,
-                      [size]: parseFloat(e.target.value),
-                    })
-                  }
-                  placeholder="Sale %"
-                />
-                <input
-                  type="number"
-                  value={editableItem.size_quantities[size] || 0}
-                  onChange={(e) =>
-                    handleChange("size_quantities", {
-                      ...editableItem.size_quantities,
-                      [size]: parseInt(e.target.value),
-                    })
-                  }
-                  placeholder="Qty"
-                />
-              </div>
-            ))}
-            <button onClick={addSizeRow}>＋ Add Size</button>
-          </div>
-
           <div className="price-section">
             <h4>Price:</h4>
             <input
@@ -230,26 +199,31 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
               }}
               placeholder="Display Price"
             />
-            <h4>Sale Price:</h4>
-            <input
-              type="number"
-              value={editableItem.display_sale_price}
-              onChange={(e) => {
-                handleChange("display_sale_price", parseFloat(e.target.value));
-                updateAllSalePrices(parseFloat(e.target.value));
-              }}
-              placeholder="Display Sale Price"
-            />
-            <h4>Sale Percent:</h4>
-            <input
-              type="number"
-              value={editableItem.display_sale_percent}
-              onChange={(e) => {
-                handleChange("display_sale_percent", parseFloat(e.target.value));
-                updateAllSalePercents(parseFloat(e.target.value));
-              }}
-              placeholder="Display Sale %"
-            />
+          </div>
+
+          <div className="size-section">
+            <h4>Sizes:</h4>
+            {editableItem.sizes.map((size, index) => (
+              <div key={size} className="size-line">
+                <input
+                  type="text"
+                  value={size}
+                  onChange={(e) => handleSizeEdit(index, e.target.value)}
+                />
+                <input
+                  type="number"
+                  value={editableItem.size_prices[size] || 0}
+                  onChange={(e) =>
+                    handleChange("size_prices", {
+                      ...editableItem.size_prices,
+                      [size]: parseFloat(e.target.value),
+                    })
+                  }
+                  placeholder="Price"
+                />
+              </div>
+            ))}
+            <button onClick={addSizeRow}>＋ Add Size</button>
           </div>
 
           <div className="other-info">
