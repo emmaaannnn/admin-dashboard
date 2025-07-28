@@ -191,7 +191,7 @@
 }
 
 .archive-select.active {
-  background-color: #12d400;;
+  background-color: #12d400;
 }
 
 .archive-select.archived {
@@ -284,5 +284,3 @@ button {
 .clothing-type-select select {
   flex: 1;
 }
-
-
