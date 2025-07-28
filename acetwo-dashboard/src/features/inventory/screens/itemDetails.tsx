@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import type { Item } from "../types/itemTypes";
 import ItemInfo from "../components/itemInfo";
-import "/src/styles/inventory/itemDetails.css"; // Assuming you have some styles for this component
+import "/src/styles/itemDetails.css"; // Assuming you have some styles for this component
 
 const emptyItem: Item = {
   base_id: "",

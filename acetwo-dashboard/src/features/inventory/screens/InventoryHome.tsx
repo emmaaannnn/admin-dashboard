@@ -5,7 +5,7 @@ import ItemList from '../components/ItemList';
 import { getItems } from '../api/getItems';
 import type { Item } from '../types/itemTypes';
 
-import '/src/styles/inventory/inventoryHome.css';
+import '/src/styles/inventoryHome.css';
 
 const InventoryHome: React.FC = () => {
   const [items, setItems] = useState<Item[]>([]);
