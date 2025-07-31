@@ -27,7 +27,7 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
   );
 
   const [draftSizes, setDraftSizes] = useState(editableItem.sizes);
-
+  const [useIndividualPricing, setUseIndividualPricing] = useState(false);
   const [showSale, setShowSale] = useState(false);
 
   const handleSizeCommit = (index: number) => {
@@ -162,16 +162,35 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
           </div>
           
           <button className="add-image-btn">＋ Add Image</button>
-          
-          <div className="description">
-            <h4>Description:</h4>
-            <textarea
-              rows={5}
-              value={editableItem.description || ""}
-              onChange={(e) => handleChange("description", e.target.value)}
-            />
-          </div>
 
+
+          {/* OTHER INFO */}
+          <div className="other-info">
+            <div>
+              <strong>Collection:</strong>
+              <input
+                value={editableItem.collection || ""}
+                onChange={(e) => handleChange("collection", e.target.value)}
+              />
+            </div>
+            <div className="clothing-type-select">
+              <strong>Clothing Type:</strong>
+              <select
+                value={editableItem.clothing_type}
+                onChange={(e) =>
+                  handleChange("clothing_type", e.target.value as Item["clothing_type"])
+                }
+              >
+                {clothingTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          
+          {/* AVAILABILITY AND ARCHIVE TOGGLE */}
           <div className="toggle-section">
             <div>
               <select
@@ -275,197 +294,282 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
           </div>
 
 
-          {/* PRICE SECTION */}  
+          {/* PRICE SECTION */}
           <div className="price-section">
             <h4>Price:</h4>
 
-            <div className="price-row">
-              <span className="prefix">$</span>
-              <input
-                type="number"
-                value={editableItem.display_price === 0 ? "" : editableItem.display_price}
-                onChange={(e) => {
-                  const val = parseFloat(e.target.value);
-                  if (!isNaN(val)) {
-                    // update display_price and all sizes
-                    const updatedSizePrices: Record<string, number> = {};
-                    editableItem.sizes.forEach(size => {
-                      updatedSizePrices[size] = val;
-                    });
+            {!useIndividualPricing ? (
+              <>
+                <div className="price-row">
+                  <span className="prefix">$</span>
+                  <input
+                    type="number"
+                    value={editableItem.display_price === 0 ? "" : editableItem.display_price}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      const updatedSizePrices: Record<string, number> = {};
+                      editableItem.sizes.forEach((size) => {
+                        updatedSizePrices[size] = isNaN(val) ? 0 : val;
+                      });
 
-                    setEditableItem(prev => ({
-                      ...prev,
-                      display_price: val,
-                      size_prices: updatedSizePrices,
-                    }));
+                      setEditableItem((prev) => ({
+                        ...prev,
+                        display_price: isNaN(val) ? 0 : val,
+                        size_prices: updatedSizePrices,
+                      }));
 
-                    onChange?.({
-                      ...editableItem,
-                      display_price: val,
-                      size_prices: updatedSizePrices,
-                    });
-                  } else {
-                    // If input cleared, set display_price to 0 (backend fallback)
-                    setEditableItem(prev => ({
-                      ...prev,
-                      display_price: 0,
-                      size_prices: {},
-                    }));
+                      onChange?.({
+                        ...editableItem,
+                        display_price: isNaN(val) ? 0 : val,
+                        size_prices: updatedSizePrices,
+                      });
+                    }}
+                    placeholder="Price"
+                  />
 
-                    onChange?.({
-                      ...editableItem,
-                      display_price: 0,
-                      size_prices: {},
-                    });
-                  }
-                }}
-                placeholder="Price"
-              />
+                  {showSale ? (
+                    <>
+                      <span className="sale-tag">SALE</span>
 
-              {showSale ? (
-                <>
-                  <span className="sale-tag">SALE</span>
+                      <div className="input-wrapper">
+                        <span className="prefix">$</span>
+                        <input
+                          type="number"
+                          value={editableItem.display_sale_price === 0 ? "" : editableItem.display_sale_price}
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value);
+                            const updatedSalePrices: Record<string, number> = {};
+                            editableItem.sizes.forEach((size) => {
+                              updatedSalePrices[size] = isNaN(val) ? 0 : val;
+                            });
 
-                  <div className="input-wrapper">
-                    <span className="prefix">$</span>
-                    <input
-                      type="number"
-                      value={editableItem.display_sale_price === 0 ? "" : editableItem.display_sale_price}
-                      onChange={(e) => {
-                        const val = parseFloat(e.target.value);
-                        if (!isNaN(val)) {
-                          const updatedSalePrices: Record<string, number> = {};
-                          editableItem.sizes.forEach(size => {
-                            updatedSalePrices[size] = val;
-                          });
+                            setEditableItem((prev) => ({
+                              ...prev,
+                              display_sale_price: isNaN(val) ? 0 : val,
+                              size_sale_prices: updatedSalePrices,
+                            }));
 
-                          setEditableItem(prev => ({
-                            ...prev,
-                            display_sale_price: val,
-                            size_sale_prices: updatedSalePrices,
-                          }));
+                            onChange?.({
+                              ...editableItem,
+                              display_sale_price: isNaN(val) ? 0 : val,
+                              size_sale_prices: updatedSalePrices,
+                            });
+                          }}
+                          placeholder="Sale Price"
+                        />
 
-                          onChange?.({
-                            ...editableItem,
-                            display_sale_price: val,
-                            size_sale_prices: updatedSalePrices,
-                          });
-                        } else {
-                          setEditableItem(prev => ({
+                        <input
+                          type="number"
+                          value={editableItem.display_sale_percent === 0 ? "" : editableItem.display_sale_percent}
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value);
+                            const updatedSalePercents: Record<string, number> = {};
+                            editableItem.sizes.forEach((size) => {
+                              updatedSalePercents[size] = isNaN(val) ? 0 : val;
+                            });
+
+                            setEditableItem((prev) => ({
+                              ...prev,
+                              display_sale_percent: isNaN(val) ? 0 : val,
+                              size_sale_percents: updatedSalePercents,
+                            }));
+
+                            onChange?.({
+                              ...editableItem,
+                              display_sale_percent: isNaN(val) ? 0 : val,
+                              size_sale_percents: updatedSalePercents,
+                            });
+                          }}
+                          placeholder="Sale %"
+                        />
+                        <span className="suffix">%</span>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          setShowSale(false);
+                          setEditableItem((prev) => ({
                             ...prev,
                             display_sale_price: 0,
+                            display_sale_percent: 0,
                             size_sale_prices: {},
+                            size_sale_percents: {},
                           }));
-
                           onChange?.({
                             ...editableItem,
                             display_sale_price: 0,
+                            display_sale_percent: 0,
                             size_sale_prices: {},
-                          });
-                        }
-                      }}
-                      placeholder="Sale Price"
-                    />
-
-                    <input
-                      type="number"
-                      value={editableItem.display_sale_percent === 0 ? "" : editableItem.display_sale_percent}
-                      onChange={(e) => {
-                        const val = parseFloat(e.target.value);
-                        if (!isNaN(val)) {
-                          const updatedSalePercents: Record<string, number> = {};
-                          editableItem.sizes.forEach(size => {
-                            updatedSalePercents[size] = val;
-                          });
-
-                          setEditableItem(prev => ({
-                            ...prev,
-                            display_sale_percent: val,
-                            size_sale_percents: updatedSalePercents,
-                          }));
-
-                          onChange?.({
-                            ...editableItem,
-                            display_sale_percent: val,
-                            size_sale_percents: updatedSalePercents,
-                          });
-                        } else {
-                          setEditableItem(prev => ({
-                            ...prev,
-                            display_sale_percent: 0,
-                            size_sale_percents: {},
-                          }));
-
-                          onChange?.({
-                            ...editableItem,
-                            display_sale_percent: 0,
                             size_sale_percents: {},
                           });
-                        }
-                      }}
-                      placeholder="Sale %"
-                    />
-                    <span className="suffix">%</span>
+                        }}
+                      >
+                        Remove Sale
+                      </button>
+                    </>
+                  ) : (
+                    <button onClick={() => setShowSale(true)}>Add Sale</button>
+                  )}
+                </div>
+
+                <button
+                  className="use-individual-pricing"
+                  onClick={() => {
+                    setUseIndividualPricing(true);
+                    setEditableItem((prev) => ({
+                      ...prev,
+                      display_price: 0,
+                      display_sale_price: 0,
+                      display_sale_percent: 0,
+                    }));
+                    onChange?.({
+                      ...editableItem,
+                      display_price: 0,
+                      display_sale_price: 0,
+                      display_sale_percent: 0,
+                    });
+                  }}
+                >
+                  Use Individual Pricing
+                </button>
+              </>
+            ) : (
+              <>
+                {editableItem.sizes.map((size) => (
+                  <div key={size} className="price-row">
+                    <span>
+                      <strong>{size}:</strong>
+                    </span>
+
+                    <div className="input-wrapper">
+                      <span className="prefix">$</span>
+                      <input
+                        type="number"
+                        value={editableItem.size_prices?.[size] ?? ""}
+                        onChange={(e) => {
+                          const val = parseFloat(e.target.value);
+                          const updated = { ...editableItem.size_prices, [size]: isNaN(val) ? 0 : val };
+                          setEditableItem((prev) => ({ ...prev, size_prices: updated }));
+                          onChange?.({ ...editableItem, size_prices: updated });
+                        }}
+                        placeholder="Price"
+                      />
+                    </div>
+
+                    {editableItem.size_sale_prices?.[size] !== undefined ? (
+                      <>
+                        <span className="sale-tag">SALE</span>
+
+                        <div className="input-wrapper">
+                          <span className="prefix">$</span>
+                          <input
+                            type="number"
+                            value={editableItem.size_sale_prices?.[size] ?? ""}
+                            onChange={(e) => {
+                              const val = parseFloat(e.target.value);
+                              const updated = { ...editableItem.size_sale_prices, [size]: isNaN(val) ? 0 : val };
+                              setEditableItem((prev) => ({ ...prev, size_sale_prices: updated }));
+                              onChange?.({ ...editableItem, size_sale_prices: updated });
+                            }}
+                            placeholder="Sale Price"
+                          />
+                        </div>
+
+                        <div className="input-wrapper">
+                          <input
+                            type="number"
+                            value={editableItem.size_sale_percents?.[size] ?? ""}
+                            onChange={(e) => {
+                              const val = parseFloat(e.target.value);
+                              const updated = { ...editableItem.size_sale_percents, [size]: isNaN(val) ? 0 : val };
+                              setEditableItem((prev) => ({ ...prev, size_sale_percents: updated }));
+                              onChange?.({ ...editableItem, size_sale_percents: updated });
+                            }}
+                            placeholder="Sale %"
+                          />
+                          <span className="suffix">%</span>
+                        </div>
+
+                        <button
+                          onClick={() => {
+                            const { [size]: _, ...salePrices } = editableItem.size_sale_prices ?? {};
+                            const { [size]: __, ...salePercents } = editableItem.size_sale_percents ?? {};
+
+                            setEditableItem((prev) => ({
+                              ...prev,
+                              size_sale_prices: salePrices,
+                              size_sale_percents: salePercents,
+                            }));
+
+                            onChange?.({
+                              ...editableItem,
+                              size_sale_prices: salePrices,
+                              size_sale_percents: salePercents,
+                            });
+                          }}
+                        >
+                          Remove Sale
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setEditableItem((prev) => ({
+                            ...prev,
+                            size_sale_prices: {
+                              ...(prev.size_sale_prices ?? {}),
+                              [size]: 0,
+                            },
+                            size_sale_percents: {
+                              ...(prev.size_sale_percents ?? {}),
+                              [size]: 0,
+                            },
+                          }));
+                        }}
+                      >
+                        Add Sale
+                      </button>
+                    )}
                   </div>
+                ))}
 
-                  <button onClick={() => {
-                    setShowSale(false);
-                    // Clear sale-related fields from editableItem
-                    setEditableItem(prev => ({
+                <button
+                  onClick={() => {
+                    setUseIndividualPricing(false);
+                    setEditableItem((prev) => ({
                       ...prev,
-                      display_sale_price: 0,
-                      display_sale_percent: 0,
+                      size_prices: {},
                       size_sale_prices: {},
                       size_sale_percents: {},
                     }));
-                    // Also notify parent if needed
                     onChange?.({
                       ...editableItem,
-                      display_sale_price: 0,
-                      display_sale_percent: 0,
+                      size_prices: {},
                       size_sale_prices: {},
                       size_sale_percents: {},
                     });
-                  }}>
-                    Remove Sale
-                  </button>
-                </>
-              ) : (
-                <button onClick={() => setShowSale(true)}>Add Sale</button>
-              )}
-            </div>
-
-            <button className="use-individual-pricing" onClick={}>Use Individual Pricing</button>
+                  }}
+                >
+                  Add Global Pricing
+                </button>
+              </>
+            )}
           </div>
 
 
+
           {/* OTHER INFO */}
-          <div className="other-info">
-            <div>
-              <strong>Collection:</strong>
-              <input
-                value={editableItem.collection || ""}
-                onChange={(e) => handleChange("collection", e.target.value)}
-              />
-            </div>
-            <div className="clothing-type-select">
-              <strong>Clothing Type:</strong>
-              <select
-                value={editableItem.clothing_type}
-                onChange={(e) =>
-                  handleChange("clothing_type", e.target.value as Item["clothing_type"])
-                }
-              >
-                {clothingTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="last-updated">
+          <div className="description">
+            <h4>Description:</h4>
+            <textarea
+              rows={5}
+              value={editableItem.description || ""}
+              onChange={(e) => handleChange("description", e.target.value)}
+            />
+          </div>
+          
+          <div className="last-updated">
               <strong>Last Updated:</strong> {new Date(editableItem.last_updated).toLocaleString()}
-            </div>
           </div>
         </div>
       </div>
