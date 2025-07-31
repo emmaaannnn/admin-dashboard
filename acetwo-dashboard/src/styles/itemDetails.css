@@ -265,10 +265,10 @@
 }
 
 .size-input {
-  min-width: 0;            /* allow shrinking inside flex */
-  max-width: 100px;         /* prevent overflow */
-  flex: 1 1 0;             /* allow growing/shrinking */
-  box-sizing: border-box;  /* include padding in width */
+  min-width: 0;
+  max-width: 100px;   
+  flex: 1 1 0;            
+  box-sizing: border-box; 
 }
 
 

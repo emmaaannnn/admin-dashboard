@@ -25,6 +25,9 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
   const [archivedStatus, setArchivedStatus] = useState(
     item.is_archived ? "Active" : "Archived"
   );
+
+  const [draftSizes, setDraftSizes] = useState(editableItem.sizes);
+
   const [showSale, setShowSale] = useState(false);
 
   const handleChange = <K extends keyof Item>(key: K, value: Item[K]) => {
@@ -33,25 +36,35 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
     onChange?.(updated);
   };
 
-  const handleSizeEdit = (index: number, newSize: string) => {
+  const handleSizeCommit = (index: number) => {
     const oldSize = editableItem.sizes[index];
-    const updatedSizes = [...editableItem.sizes];
-    updatedSizes[index] = newSize;
+    const newSize = draftSizes[index];
+
+    if (oldSize === newSize) return; // no change
 
     const updateKey = (record: Record<string, any>) => {
       const { [oldSize]: value, ...rest } = record;
       return { ...rest, [newSize]: value };
     };
 
+    const newSizes = [...editableItem.sizes];
+    newSizes[index] = newSize;
+
     setEditableItem({
       ...editableItem,
-      sizes: updatedSizes,
+      sizes: newSizes,
       size_ids: updateKey(editableItem.size_ids),
       size_prices: updateKey(editableItem.size_prices),
       size_quantities: updateKey(editableItem.size_quantities),
       size_sale_prices: updateKey(editableItem.size_sale_prices || {}),
       size_sale_percents: updateKey(editableItem.size_sale_percents || {}),
     });
+  };
+
+  const handleSizeTyping = (index: number, newValue: string) => {
+    const updated = [...draftSizes];
+    updated[index] = newValue;
+    setDraftSizes(updated);
   };
 
   const addSizeRow = () => {
@@ -201,6 +214,8 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
 
         {/* RIGHT SIDE */}
         <div className="right-info">
+
+          {/* ID Section */}
           <div className="id-section">
             <h4>ID:</h4> 
             <input
@@ -222,16 +237,17 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
             />
           </div>
 
+          {/* SIZE SECTION */}
           <div className="size-section">
             <h4>Sizes:</h4>
             {editableItem.sizes.map((size, index) => (
               <div key={size} className="size-row">
                 {/* Size name */}
                 <input
-                  className= "size-input"
                   type="text"
-                  value={size}
-                  onChange={(e) => handleSizeEdit(index, e.target.value)}
+                  value={draftSizes[index]}
+                  onChange={(e) => handleSizeTyping(index, e.target.value)}
+                  onBlur={() => handleSizeCommit(index)} // Commit on blur
                   placeholder="Size"
                 />
 
@@ -258,13 +274,15 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
                   />
                 </div>
                 
-                {/* 🗑 Delete button */}
+                {/* Delete button */}
                 <button type="button" onClick={() => removeSizeRow(index)}>🗑</button>
               </div>
             ))}
             <button onClick={addSizeRow}>＋ Add Size</button>
           </div>
 
+
+          {/* PRICE SECTION */}  
           <div className="price-section">
             <label>Price:</label>
             <div className="price-row">
@@ -302,6 +320,8 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
             )}
           </div>
 
+
+          {/* OTHER INFO */}
           <div className="other-info">
             <div>
               <strong>Collection:</strong>
