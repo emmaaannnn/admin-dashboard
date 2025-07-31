@@ -125,11 +125,11 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
       {/* NAME SECTION */}
       <div className="name-section">
         <h4>Name:</h4>
-            <input
-              type="text"
-              value={editableItem.name}
-              onChange={(e) => handleChange("name", e.target.value)}
-            />
+          <input
+            type="text"
+            value={editableItem.name}
+            onChange={(e) => handleChange("name", e.target.value)}
+          />
       </div>
       
       <div className="info-body">
@@ -228,6 +228,7 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
               <div key={size} className="size-row">
                 {/* Size name */}
                 <input
+                  className= "size-input"
                   type="text"
                   value={size}
                   onChange={(e) => handleSizeEdit(index, e.target.value)}
@@ -235,25 +236,28 @@ const ItemInfo: React.FC<ItemInfoProps> = ({ item, onChange }) => {
                 />
 
                 {/* Size ID (readonly) */}
-                <input
-                  type="text"
-                  value={editableItem.size_ids[size] || ""}
-                  placeholder="ID"
-                  readOnly
-                />
+                <span className="size-id-label">
+                  <strong>ID:</strong> {editableItem.size_ids[size] || "—"}
+                </span>
 
                 {/* Quantity */}
-                <input
-                  type="number"
-                  value={editableItem.size_quantities[size] ?? 0}
-                  onChange={(e) =>
-                    handleChange("size_quantities", {
-                      ...editableItem.size_quantities,
-                      [size]: +e.target.value,
-                    })
-                  }
-                  placeholder="Qty"
-                />
+                <div className="size-quantity-wrapper">
+                  <label htmlFor={`qty-${index}`}><strong>QTY:</strong></label>
+                  <input
+                    id={`qty-${index}`}
+                    className="size-quantity-input"
+                    type="number"
+                    value={editableItem.size_quantities[size] ?? 0}
+                    onChange={(e) =>
+                      handleChange("size_quantities", {
+                        ...editableItem.size_quantities,
+                        [size]: +e.target.value,
+                      })
+                    }
+                    placeholder="Qty"
+                  />
+                </div>
+                
                 {/* 🗑 Delete button */}
                 <button type="button" onClick={() => removeSizeRow(index)}>🗑</button>
               </div>
