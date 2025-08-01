@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Item } from "../types/itemTypes";
 
 type ItemCardProps = {
@@ -7,6 +8,7 @@ type ItemCardProps = {
 };
 
 const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
+  const navigate = useNavigate();
   const [availabilityStatus, setAvailabilityStatus] = useState(
     item.is_available ? "Available" : "Hidden"
   );
@@ -19,6 +21,17 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
     (acc, qty) => acc + qty,
     0
   );
+
+  // Prevent navigation if clicking inside interactive elements (select, button, input)
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    const tagName = target.tagName.toLowerCase();
+
+    if (["button", "input", "select", "textarea", "label"].includes(tagName)) {
+      return; // Don't navigate if clicking on inputs/buttons/selects
+    }
+    navigate(`/inventory/${item.base_id}`);
+  };
 
   const handleAvailabilityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value;
@@ -34,7 +47,18 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
 
   return (
     <div className="item-card-container">
-      <div className="item-card">
+      <div
+        className="item-card"
+        onClick={handleCardClick}
+        style={{ cursor: "pointer" }}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            navigate(`/inventory/${item.base_id}`);
+          }
+        }}
+      >
         {/* Image */}
         <div
           className="item-image"
@@ -47,10 +71,16 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
           <div className="item-price">
             {item.is_on_sale ? (
               <>
-                <span style={{ textDecoration: 'line-through', color: '#888', marginRight: '8px' }}>
+                <span
+                  style={{
+                    textDecoration: "line-through",
+                    color: "#888",
+                    marginRight: "8px",
+                  }}
+                >
                   ${item.display_price.toFixed(2)}
                 </span>
-                <span style={{ color: 'red', fontWeight: 'bold' }}>
+                <span style={{ color: "red", fontWeight: "bold" }}>
                   ${item.display_sale_price.toFixed(2)}
                 </span>
               </>
@@ -70,10 +100,8 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
               value={availabilityStatus}
               onChange={handleAvailabilityChange}
               className={`availability-select ${
-                availabilityStatus === "Available"
-                  ? "available"
-                  : "hidden"
-              }`} 
+                availabilityStatus === "Available" ? "available" : "hidden"
+              }`}
             >
               <option value="Available">Available</option>
               <option value="Hidden">Hidden</option>
@@ -108,43 +136,47 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
 
         {/* SALE Tag */}
         <div className="SaleTag">
-          {item.is_on_sale ? (
-            <div className="sale-label">SALE</div>
-          ) : (
-            <div></div>
-          )}
+          {item.is_on_sale ? <div className="sale-label">SALE</div> : <div></div>}
         </div>
-
-
 
         {/* Size/Quantity - aligned far right */}
         <div className="size-quantity-wrapper">
           {Object.entries(localQuantities).map(([size, qty]) => (
             <div className="size-quantity-control" key={size}>
-              {/* Quantity control with custom buttons */}
-              <div className={`quantity-box ${qty === 0 ? 'out-of-stock' : ''}`}>
-
+              <div className={`quantity-box ${qty === 0 ? "out-of-stock" : ""}`}>
                 <span className="size-label">{size}</span>
 
                 <div className="quantity-controls">
                   <button
                     className="qty-btn up"
-                    onClick={() => updateQuantity(size, qty + 1)}
-                  >▲</button>
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateQuantity(size, qty + 1);
+                    }}
+                  >
+                    ▲
+                  </button>
 
                   <input
                     type="number"
                     value={qty}
-                    onChange={(e) =>
-                      updateQuantity(size, Math.max(0, parseInt(e.target.value) || 0))
-                    }
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      updateQuantity(size, Math.max(0, parseInt(e.target.value) || 0));
+                    }}
                     className="quantity-input"
+                    onClick={(e) => e.stopPropagation()}
                   />
 
                   <button
                     className="qty-btn down"
-                    onClick={() => updateQuantity(size, Math.max(0, qty - 1))}
-                  >▼</button>
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateQuantity(size, Math.max(0, qty - 1));
+                    }}
+                  >
+                    ▼
+                  </button>
                 </div>
               </div>
             </div>
@@ -152,7 +184,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onChanged }) => {
         </div>
       </div>
     </div>
-
   );
 };
 

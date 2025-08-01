@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import type { Item } from "../types/itemTypes";
 import ItemInfo from "../components/itemInfo";
 import "/src/styles/itemDetails.css"; // Assuming you have some styles for this component
+import { getItems } from "../api/getItems"; // Adjust the import based on your project structure
 
 const emptyItem: Item = {
   base_id: "",
@@ -46,6 +47,19 @@ const ItemDetails: React.FC = () => {
       // New item
       setItem(emptyItem);
     } else {
+      getItems()
+        .then((items) => {
+          const found = items.find((i) => i.base_id === base_id);
+          if (found) setItem(found);
+          else {
+            alert("Item not found");
+            navigate("/inventory");
+          }
+        })
+        .catch(() => {
+          alert("Failed to fetch items");
+          navigate("/inventory");
+        });
     }
   }, [base_id]);
 
