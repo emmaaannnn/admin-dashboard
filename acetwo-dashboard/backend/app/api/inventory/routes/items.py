@@ -13,7 +13,7 @@ def get_items(db: Session = Depends(get_db)):
     return item_service.get_all_items(db)
 
 @router.get("/{item_id}", response_model=ItemRead)
-def get_item(item_id: UUID, db: Session = Depends(get_db)):
+def get_item(item_id: str, db: Session = Depends(get_db)):
     return item_service.get_item_by_id(item_id, db)
 
 @router.post("/", response_model=ItemRead, status_code=201)
