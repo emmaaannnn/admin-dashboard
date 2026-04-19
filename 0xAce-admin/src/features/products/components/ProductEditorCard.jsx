@@ -1,4 +1,4 @@
-import "./ProductEditorCard.css";
+import "./styles/ProductEditorCard.css";
 
 function ProductEditorCard({
   title,
@@ -15,7 +15,12 @@ function ProductEditorCard({
       <div className="editor-card__header">
         <h3>{title}</h3>
         {actionLabel ? (
-          <button type="button" className="text-button" onClick={onAction}>
+          <button
+            type="button"
+            className="utility-button"
+            onClick={onAction}
+            disabled={!onAction}
+          >
             {actionLabel}
           </button>
         ) : null}

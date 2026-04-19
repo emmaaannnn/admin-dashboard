@@ -1,0 +1,112 @@
+.products-overview-page {
+  gap: 0.55rem;
+}
+
+.products-overview-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.55rem;
+}
+
+.products-overview-toolbar__title {
+  margin: 0;
+  font-size: clamp(1.18rem, 1.7vw, 1.55rem);
+  line-height: 0.95;
+}
+
+.products-overview-toolbar__copy {
+  max-width: 36rem;
+  font-size: 0.82rem;
+}
+
+.products-overview-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.products-drop-filter {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 200px;
+}
+
+.products-drop-filter__label {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.62rem;
+}
+
+.products-drop-filter__select {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--surface-border);
+  background: transparent;
+  padding: 0.32rem 0;
+  outline: none;
+}
+
+.products-button--compact {
+  padding: 0.55rem 0.7rem;
+  font-size: 0.64rem;
+}
+
+.products-overview-section {
+  gap: 0.45rem;
+  padding: 0.55rem 0;
+}
+
+.products-overview-section__header {
+  align-items: end;
+}
+
+.products-overview-section__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.products-overview-section__meta {
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.products-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--surface-border);
+}
+
+.products-view-toggle__button {
+  border: none;
+  background: transparent;
+  padding: 0.42rem 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.63rem;
+}
+
+.products-view-toggle__button.is-active {
+  background: rgba(78, 97, 118, 0.08);
+  color: var(--accent-strong);
+}
+
+@media (max-width: 640px) {
+  .products-overview-toolbar,
+  .products-overview-toolbar__actions,
+  .products-overview-section__controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .products-drop-filter {
+    min-width: 0;
+  }
+}
