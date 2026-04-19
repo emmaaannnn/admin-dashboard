@@ -1,0 +1,198 @@
+:root {
+  font-family: "Avenir Next", "Helvetica Neue", sans-serif;
+  --page-bg: #f3efe7;
+  --sidebar-bg: #ede6dc;
+  --surface: #f7f4ef;
+  --surface-muted: #f0ebe3;
+  --surface-border: #d6cec1;
+  --text-main: #171816;
+  --text-muted: #6f6a60;
+  --accent: #66788d;
+  --accent-strong: #4e6176;
+  --accent-soft: #dbe3eb;
+  --warning-strong: #8e674f;
+  --warning-soft: #ece0d5;
+  --danger-soft: #eedfd7;
+  --danger-strong: #7d5747;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--text-main);
+  font-family: inherit;
+}
+
+button,
+a,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.eyebrow,
+.section-kicker,
+.sidebar-meta,
+.data-card__eyebrow,
+.data-grid span,
+.product-catalog__header span,
+.variant-table__header span,
+.editor-fields span,
+.metric-card span,
+.sidebar-link__meta {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+}
+
+.page-copy,
+.sidebar-copy,
+.sidebar-user-card span,
+.product-row p,
+.data-grid strong,
+.editor-fields strong,
+.variant-table__row span,
+.login-form label,
+.form-error {
+  color: var(--text-muted);
+}
+
+.page-header-card h2,
+.login-panel h1,
+.login-panel h2,
+.detail-panel__header h2,
+.products-toolbar__title,
+.product-row h3,
+.data-card h3,
+.menu-card-label,
+.variants-card__header h3,
+.editor-card__header h3 {
+  font-family: "Iowan Old Style", "Baskerville", "Times New Roman", serif;
+  font-weight: 500;
+}
+
+.sidebar-brand h2,
+.page-header-card h2,
+.login-panel h1,
+.login-panel h2,
+.detail-panel__header h2,
+.product-row h3,
+.data-card h3,
+.variants-card__header h3,
+.editor-card__header h3 {
+  margin: 0;
+  line-height: 1;
+}
+
+.search-shell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: min(100%, 420px);
+  padding: 0.45rem 0;
+  border: none;
+  border-bottom: 1px solid var(--surface-border);
+  background: transparent;
+}
+
+.search-shell__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 0.9rem;
+  height: 0.9rem;
+  color: var(--text-muted);
+}
+
+.search-shell__icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.search-shell input,
+.login-form input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.55rem;
+  border-radius: 2px;
+  font-size: 0.78rem;
+  text-transform: capitalize;
+}
+
+.status-pill--active,
+.status-pill--paid,
+.status-pill--shipped,
+.status-pill--in_stock,
+.status-pill--live {
+  background: var(--accent-soft);
+}
+
+.status-pill--archived,
+.status-pill--unfulfilled,
+.status-pill--low_stock,
+.status-pill--coming_soon {
+  background: var(--warning-soft);
+}
+
+.status-pill--sold_out {
+  background: var(--danger-soft);
+}
+
+.primary-button,
+.secondary-button,
+.text-button {
+  font: inherit;
+}
+
+.primary-button,
+.secondary-button {
+  padding: 0.95rem 1.35rem;
+  border: 1px solid transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.8rem;
+}
+
+.primary-button {
+  color: #ffffff;
+  background: var(--accent);
+}
+
+.secondary-button {
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+}
+
+.text-button {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--accent-strong);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+}
