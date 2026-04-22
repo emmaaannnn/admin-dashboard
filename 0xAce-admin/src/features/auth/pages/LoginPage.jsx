@@ -21,7 +21,7 @@ function LoginPage() {
     const success = login({ email, password });
 
     if (!success) {
-      setError("Use the mock admin credentials configured below.");
+      setError("Incorrect email or password.");
       return;
     }
 
@@ -31,60 +31,48 @@ function LoginPage() {
 
   return (
     <main className="login-shell">
-      <section className="login-panel login-panel--brand">
-        <div className="login-brand__logo-frame">
-          <img src="/0xACElogo.png" alt="0xAce" className="login-brand__logo" />
-        </div>
-        <p className="eyebrow">Atelier admin</p>
-        <h1>Inventory control for the 0xAce studio.</h1>
-        <p className="page-copy">
-          This login stays separate from the shared admin shell so the route structure remains easy to reason about when real auth is introduced.
-        </p>
-      </section>
+      <div className="login-shell__glow login-shell__glow--top" aria-hidden="true" />
+      <div className="login-shell__glow login-shell__glow--bottom" aria-hidden="true" />
 
-      <section className="login-panel login-panel--form">
-        <div>
-          <p className="section-kicker">Admin Login</p>
-          <h2>Sign in</h2>
-          <p className="page-copy">
-            Use the mock credentials for now. Supabase auth can replace this later without touching the feature folders.
-          </p>
-        </div>
-
-        <form className="login-form" onSubmit={handleSubmit}>
-          <label>
-            Admin email
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="admin@0xace.store"
-              autoComplete="username"
-            />
-          </label>
-
-          <label>
-            Password
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Enter admin password"
-              autoComplete="current-password"
-            />
-          </label>
-
-          {error ? <p className="form-error">{error}</p> : null}
-
-          <div className="login-credentials">
-            <span>Mock email: admin@0xace.store</span>
-            <span>Mock password: atelier-admin</span>
+      <section className="login-card">
+        <section className="login-panel login-panel--form" aria-label="Admin login form">
+          <div className="login-form__heading">
+            <div className="login-brand__logo-frame">
+              <img src="/0xACElogo.png" alt="0xAce" className="login-brand__logo" />
+            </div>
+            <h1>Admin login</h1>
           </div>
 
-          <button type="submit" className="primary-button">
-            Enter admin workspace
-          </button>
-        </form>
+          <form className="login-form" onSubmit={handleSubmit}>
+            <label>
+              <span>Email</span>
+              <input
+                type="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="Email"
+                autoComplete="username"
+              />
+            </label>
+
+            <label>
+              <span>Password</span>
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Password"
+                autoComplete="current-password"
+              />
+            </label>
+
+            {error ? <p className="form-error">{error}</p> : null}
+
+            <button type="submit" className="primary-button login-form__submit">
+              Sign in
+            </button>
+          </form>
+        </section>
       </section>
     </main>
   );
