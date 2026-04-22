@@ -31,7 +31,7 @@
 .metric-card--warning {
   padding: 0.55rem;
   background: var(--warning-strong);
-  color: #fff6f1;
+  color: #eb7262;
 }
 
 .metric-card--warning span,

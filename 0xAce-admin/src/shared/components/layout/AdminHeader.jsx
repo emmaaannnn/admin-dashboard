@@ -85,8 +85,6 @@ function AdminHeader() {
       </label>
 
       <div className="admin-header__actions">
-        <span className="admin-header__brand">The Digital Curator</span>
-
         <div className="header-menu-group">
           <button
             type="button"

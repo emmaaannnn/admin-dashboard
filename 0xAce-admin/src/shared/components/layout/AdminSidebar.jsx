@@ -28,7 +28,8 @@ function AdminSidebar() {
             <img src="/0xACElogo.png" alt="0xAce" className="sidebar-brand__logo" />
           </div>
           <div className="sidebar-brand__copy">
-            <h2>Admin Dashboard</h2>
+            <h2>0xACE</h2>
+            <span>Admin</span>
           </div>
         </div>
 

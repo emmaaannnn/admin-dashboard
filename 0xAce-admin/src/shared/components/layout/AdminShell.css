@@ -1,7 +1,7 @@
 .admin-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 188px minmax(0, 1fr);
+  grid-template-columns: 224px minmax(0, 1fr);
   align-items: start;
 }
 
@@ -10,12 +10,12 @@
   display: grid;
   grid-template-rows: auto 1fr;
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.45), transparent 28%),
-    linear-gradient(180deg, #f7f4ef 0%, #f3efe7 100%);
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.62), transparent 26%),
+    linear-gradient(180deg, #f8f5f0 0%, #f2ece3 52%, #eee6dc 100%);
 }
 
 .admin-workspace {
-  padding: 1.25rem 1.5rem 2.5rem;
+  padding: 1.25rem 1.5rem 2.75rem;
 }
 
 .admin-main {
