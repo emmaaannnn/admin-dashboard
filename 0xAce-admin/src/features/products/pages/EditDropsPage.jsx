@@ -3,14 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import ProductEditorCard from "../components/ProductEditorCard";
 import { cloneDrop, createEmptyDrop } from "../lib/productsState";
 import { useProducts } from "../providers/ProductsProvider";
-import "./ProductFormPage.css";
+import "./styles/ProductFormPage.css";
 
 function navigateBack(navigate) {
-  if (window.history.length > 1) {
-    navigate(-1);
-    return;
-  }
-
   navigate("/products");
 }
 

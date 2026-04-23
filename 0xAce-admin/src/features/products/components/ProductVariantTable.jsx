@@ -1,11 +1,16 @@
 import "./styles/ProductVariantTable.css";
 
-function ProductVariantTable({ variants, onVariantChange }) {
+function ProductVariantTable({ variants, onVariantChange, onAddVariant }) {
   return (
     <section className="variants-card">
       <div className="variants-card__header">
-        <h3>Product Variants</h3>
-        <span className="variants-card__copy">Inventory and pricing</span>
+        <div>
+          <h3>Product Variants</h3>
+          <span className="variants-card__copy">Inventory and pricing</span>
+        </div>
+        <button type="button" className="utility-button" onClick={onAddVariant}>
+          Add Variant
+        </button>
       </div>
 
       <div className="variant-table">
@@ -21,9 +26,24 @@ function ProductVariantTable({ variants, onVariantChange }) {
 
         {variants.map((variant) => (
           <div key={variant.id} className="variant-table__row">
-            <strong>{variant.sku}</strong>
-            <span>{variant.color}</span>
-            <span>{variant.size}</span>
+            <input
+              className="variant-table__text-input variant-table__text-input--strong"
+              type="text"
+              value={variant.sku}
+              onChange={(event) => onVariantChange(variant.id, "sku", event.target.value)}
+            />
+            <input
+              className="variant-table__text-input"
+              type="text"
+              value={variant.color}
+              onChange={(event) => onVariantChange(variant.id, "color", event.target.value)}
+            />
+            <input
+              className="variant-table__text-input"
+              type="text"
+              value={variant.size}
+              onChange={(event) => onVariantChange(variant.id, "size", event.target.value)}
+            />
             <label className="variant-table__input-shell">
               <span className="variant-table__input-prefix">$</span>
               <input

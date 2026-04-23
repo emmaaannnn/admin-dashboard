@@ -52,7 +52,7 @@ function ProductTable({
             className={`product-row__summary${selectedProductId === product.id ? " is-selected" : ""}`}
             onClick={() => {
               if (viewMode === "quick") {
-                onSelectProduct(product.id);
+                onSelectProduct(selectedProductId === product.id ? null : product.id);
                 return;
               }
 

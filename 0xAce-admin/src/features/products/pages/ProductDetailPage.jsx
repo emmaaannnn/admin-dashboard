@@ -1,16 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ProductDetailsPane from "../components/ProductDetailsPane";
-import { cloneProduct, getInventoryStatus } from "../lib/productsState";
+import { cloneProduct, createEmptyVariant, getInventoryStatus } from "../lib/productsState";
 import { useProducts } from "../providers/ProductsProvider";
-import "./ProductDetailPage.css";
+import "./styles/ProductDetailPage.css";
 
 function navigateBack(navigate) {
-  if (window.history.length > 1) {
-    navigate(-1);
-    return;
-  }
-
   navigate("/products");
 }
 
@@ -108,6 +103,22 @@ function ProductDetailPage() {
     }));
   };
 
+  const handleAddVariant = () => {
+    setDraftProduct((currentProduct) => {
+      if (!currentProduct) {
+        return currentProduct;
+      }
+
+      return {
+        ...currentProduct,
+        variants: [
+          ...currentProduct.variants,
+          createEmptyVariant(currentProduct.id, currentProduct.variants.length),
+        ],
+      };
+    });
+  };
+
   const handleDiscardChanges = () => {
     setDraftProduct(cloneProduct(sourceProduct));
   };
@@ -150,6 +161,7 @@ function ProductDetailPage() {
         onProductChange={handleProductChange}
         onSizeGuideChange={handleSizeGuideChange}
         onVariantChange={handleVariantChange}
+        onAddVariant={handleAddVariant}
       />
     </div>
   );

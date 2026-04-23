@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import AdminAppShell from "../shared/components/layout/AdminAppShell";
+import AdminAppShell from "../shared/components/AdminAppShell";
 import LoginPage from "../features/auth/pages/LoginPage";
 import ProductsLayout from "../features/products/pages/ProductsLayout";
 import ProductsOverviewPage from "../features/products/pages/ProductsOverviewPage";

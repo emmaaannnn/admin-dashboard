@@ -8,6 +8,7 @@ function ProductDetailsPane({
   onProductChange,
   onSizeGuideChange,
   onVariantChange,
+  onAddVariant,
   kicker = "Active selection",
   title = product.name,
 }) {
@@ -119,7 +120,11 @@ function ProductDetailsPane({
         </ProductEditorCard>
       </div>
 
-      <ProductVariantTable variants={product.variants} onVariantChange={onVariantChange} />
+      <ProductVariantTable
+        variants={product.variants}
+        onVariantChange={onVariantChange}
+        onAddVariant={onAddVariant}
+      />
     </section>
   );
 }

@@ -120,6 +120,22 @@ export function createEmptyProduct(drops, productCount) {
   );
 }
 
+export function createEmptyVariant(productId, variantCount = 0) {
+  const timestamp = Date.now();
+
+  return {
+    id: `variant-${timestamp}-${variantCount + 1}`,
+    product_id: productId,
+    sku: `SKU-${variantCount + 1}`,
+    color: "Core",
+    size: "M",
+    price_aud: 0,
+    compare_at_price_aud: null,
+    inventory_quantity: 0,
+    inventory_status: "sold_out",
+  };
+}
+
 export function createEmptyDrop(dropCount) {
   const timestamp = Date.now();
 

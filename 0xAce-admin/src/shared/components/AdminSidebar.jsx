@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
-import adminNavigation from "../../config/adminNavigation";
-import "./AdminSidebar.css";
+import adminNavigation from "../config/adminNavigation";
+import "./styles/AdminSidebar.css";
 
 function SidebarIcon({ path }) {
   return (

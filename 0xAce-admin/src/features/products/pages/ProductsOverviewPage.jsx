@@ -5,7 +5,7 @@ import ProductStats from "../components/ProductStats";
 import ProductTable from "../components/ProductTable";
 import { cloneProduct, getInventoryStatus } from "../lib/productsState";
 import { useProducts } from "../providers/ProductsProvider";
-import "./ProductsOverviewPage.css";
+import "./styles/ProductsOverviewPage.css";
 
 function matchesSearch(product, query) {
   return [
@@ -26,7 +26,7 @@ function ProductsOverviewPage() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [viewMode, setViewMode] = useState("full");
   const [selectedDropId, setSelectedDropId] = useState("all");
-  const [selectedProductId, setSelectedProductId] = useState(products[0]?.id ?? null);
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
   const filteredProducts = products.filter((product) => {
@@ -44,12 +44,16 @@ function ProductsOverviewPage() {
       return;
     }
 
+    if (viewMode !== "quick") {
+      return;
+    }
+
     const selectionStillVisible = filteredProducts.some(
       (product) => product.id === selectedProductId
     );
 
     if (!selectionStillVisible) {
-      setSelectedProductId(filteredProducts[0].id);
+      setSelectedProductId(null);
     }
   }, [filteredProducts, selectedProductId, viewMode]);
 
@@ -209,7 +213,10 @@ function ProductsOverviewPage() {
               <button
                 type="button"
                 className={`products-view-toggle__button${viewMode === "quick" ? " is-active" : ""}`}
-                onClick={() => setViewMode("quick")}
+                onClick={() => {
+                  setSelectedProductId(null);
+                  setViewMode("quick");
+                }}
               >
                 Quick Edit
               </button>

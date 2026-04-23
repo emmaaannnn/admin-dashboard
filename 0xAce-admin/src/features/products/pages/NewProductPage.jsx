@@ -3,18 +3,14 @@ import { useNavigate } from "react-router-dom";
 import ProductDetailsPane from "../components/ProductDetailsPane";
 import {
   cloneProduct,
+  createEmptyVariant,
   createEmptyProduct,
   getInventoryStatus,
 } from "../lib/productsState";
 import { useProducts } from "../providers/ProductsProvider";
-import "./ProductFormPage.css";
+import "./styles/ProductFormPage.css";
 
 function navigateBack(navigate) {
-  if (window.history.length > 1) {
-    navigate(-1);
-    return;
-  }
-
   navigate("/products");
 }
 
@@ -77,6 +73,16 @@ function NewProductPage() {
     }));
   };
 
+  const handleAddVariant = () => {
+    setDraftProduct((currentProduct) => ({
+      ...currentProduct,
+      variants: [
+        ...currentProduct.variants,
+        createEmptyVariant(currentProduct.id, currentProduct.variants.length),
+      ],
+    }));
+  };
+
   const handleCreateProduct = () => {
     const nextProduct = createProduct(draftProduct);
     navigate(`/products/${nextProduct.id}`);
@@ -108,6 +114,7 @@ function NewProductPage() {
         onProductChange={handleProductChange}
         onSizeGuideChange={handleSizeGuideChange}
         onVariantChange={handleVariantChange}
+        onAddVariant={handleAddVariant}
         kicker="New product draft"
         title={draftProduct.name}
       />

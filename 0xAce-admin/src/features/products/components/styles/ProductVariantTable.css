@@ -5,6 +5,10 @@
   gap: 0.6rem;
 }
 
+.variants-card__header h3 {
+  margin: 0;
+}
+
 .variants-card__copy {
   color: var(--text-muted);
   font-size: 0.74rem;
@@ -21,6 +25,21 @@
 .variant-table__row {
   padding-top: 0.6rem;
   border-top: 1px solid var(--surface-border);
+}
+
+.variant-table__text-input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  border-bottom: 1px solid rgba(23, 24, 22, 0.08);
+  background: transparent;
+  color: var(--text-main);
+  outline: none;
+  padding: 0.2rem 0;
+}
+
+.variant-table__text-input--strong {
+  font-weight: 600;
 }
 
 .variant-table__input-shell,

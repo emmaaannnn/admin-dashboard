@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
-import AdminShellProvider from "../../../app/providers/AdminShellProvider";
+import AdminShellProvider from "../../app/providers/AdminShellProvider";
 import AdminHeader from "./AdminHeader";
 import AdminSidebar from "./AdminSidebar";
-import "./AdminShell.css";
+import "./styles/AdminShell.css";
 
 function AdminAppShell() {
   return (

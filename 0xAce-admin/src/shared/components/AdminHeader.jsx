@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useAdminSession } from "../../../app/providers/AdminSessionProvider";
-import { useAdminShell } from "../../../app/providers/AdminShellProvider";
-import "./AdminHeader.css";
+import { useAdminSession } from "../../app/providers/AdminSessionProvider";
+import { useAdminShell } from "../../app/providers/AdminShellProvider";
+import "./styles/AdminHeader.css";
 
 function SearchIcon() {
   return (
