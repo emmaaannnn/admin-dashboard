@@ -1,5 +1,6 @@
 import ProductEditorCard from "./ProductEditorCard";
 import ProductVariantTable from "./ProductVariantTable";
+import { isProductOnSale } from "../lib/productsState";
 import "./styles/ProductDetailsPane.css";
 
 function ProductDetailsPane({
@@ -12,6 +13,8 @@ function ProductDetailsPane({
   kicker = "Active selection",
   title = product.name,
 }) {
+  const productIsOnSale = isProductOnSale(product);
+
   return (
     <section className="detail-panel">
       <div className="detail-panel__header">
@@ -21,6 +24,7 @@ function ProductDetailsPane({
         </div>
 
         <div className="detail-actions">
+          {productIsOnSale ? <span className="status-pill status-pill--sale">Sale</span> : null}
           <span className={`status-pill status-pill--${product.status}`}>
             {product.status}
           </span>

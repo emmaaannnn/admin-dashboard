@@ -12,6 +12,17 @@ export function getInventoryStatus(quantity) {
   return "in_stock";
 }
 
+export function isVariantOnSale(variant) {
+  const price = Number(variant.price_aud);
+  const compareAtPrice = Number(variant.compare_at_price_aud);
+
+  return Number.isFinite(price) && Number.isFinite(compareAtPrice) && compareAtPrice > price;
+}
+
+export function isProductOnSale(product) {
+  return product.variants.some((variant) => isVariantOnSale(variant));
+}
+
 export function cloneProduct(product) {
   return {
     ...product,

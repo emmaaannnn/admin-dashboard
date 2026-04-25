@@ -162,6 +162,11 @@ a {
   background: var(--danger-soft);
 }
 
+.status-pill--sale {
+  background: #dcebd4;
+  color: #33512f;
+}
+
 .primary-button,
 .secondary-button,
 .text-button,

@@ -1,3 +1,4 @@
+import { isVariantOnSale } from "../lib/productsState";
 import "./styles/ProductVariantTable.css";
 
 function ProductVariantTable({ variants, onVariantChange, onAddVariant }) {
@@ -108,9 +109,12 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant }) {
                 +
               </button>
             </div>
-            <span className={`status-pill status-pill--${variant.inventory_status}`}>
-              {variant.inventory_status.replace("_", " ")}
-            </span>
+            <div className="variant-table__status">
+              {isVariantOnSale(variant) ? <span className="status-pill status-pill--sale">Sale</span> : null}
+              <span className={`status-pill status-pill--${variant.inventory_status}`}>
+                {variant.inventory_status.replace("_", " ")}
+              </span>
+            </div>
           </div>
         ))}
       </div>

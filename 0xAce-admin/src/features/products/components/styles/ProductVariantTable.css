@@ -87,6 +87,13 @@
   cursor: pointer;
 }
 
+.variant-table__status {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
 @media (max-width: 980px) {
   .variant-table__header,
   .variant-table__row {

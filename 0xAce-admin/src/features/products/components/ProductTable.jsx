@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { formatMoney } from "../../../shared/lib/formatters";
+import { isProductOnSale, isVariantOnSale } from "../lib/productsState";
 import "./styles/ProductTable.css";
 
 function getPriceLabel(variants) {
@@ -47,6 +48,10 @@ function ProductTable({
 
       {products.map((product) => (
         <article key={product.id} className="product-row">
+          {(() => {
+            const productIsOnSale = isProductOnSale(product);
+
+            return (
           <button
             type="button"
             className={`product-row__summary${selectedProductId === product.id ? " is-selected" : ""}`}
@@ -72,6 +77,7 @@ function ProductTable({
               <div className="product-row__copy">
                 <div className="product-row__copy-top">
                   <h3>{product.name}</h3>
+                  {productIsOnSale ? <span className="status-pill status-pill--sale">Sale</span> : null}
                   <span className="product-row__slug">/{product.slug}</span>
                 </div>
                 <div className="product-row__meta-line">
@@ -90,7 +96,8 @@ function ProductTable({
               ))}
             </div>
             <div>{product.variants.length ? getPriceLabel(product.variants) : "N/A"}</div>
-            <div>
+            <div className="product-row__status-group">
+              {productIsOnSale ? <span className="status-pill status-pill--sale">Sale</span> : null}
               <span className={`status-pill status-pill--${product.inventoryState === "out_of_stock" ? "sold_out" : product.inventoryState === "in_stock" ? "in_stock" : product.status}`}>
                 {product.inventoryState.replace("_", " ")}
               </span>
@@ -99,6 +106,8 @@ function ProductTable({
               {viewMode === "quick" ? (selectedProductId === product.id ? "-" : "+") : ">"}
             </div>
           </button>
+            );
+          })()}
 
           {viewMode === "quick" && selectedProductId === product.id ? (
             <div className="product-row__expanded">
@@ -234,9 +243,12 @@ function ProductTable({
                       </button>
                     </div>
 
-                    <span className={`status-pill status-pill--${variant.inventory_status}`}>
-                      {variant.inventory_status.replace("_", " ")}
-                    </span>
+                    <div className="product-row__quick-status">
+                      {isVariantOnSale(variant) ? <span className="status-pill status-pill--sale">Sale</span> : null}
+                      <span className={`status-pill status-pill--${variant.inventory_status}`}>
+                        {variant.inventory_status.replace("_", " ")}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
