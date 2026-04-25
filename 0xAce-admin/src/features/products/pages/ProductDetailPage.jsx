@@ -144,10 +144,18 @@ function ProductDetailPage() {
         <div className="product-workspace__actions">
           {hasUnsavedChanges ? (
             <>
-              <button type="button" className="utility-button" onClick={handleDiscardChanges}>
+              <button
+                type="button"
+                className="utility-button product-workspace__action-button"
+                onClick={handleDiscardChanges}
+              >
                 Discard
               </button>
-              <button type="button" className="primary-button products-button--compact" onClick={handleSaveChanges}>
+              <button
+                type="button"
+                className="primary-button products-button--compact product-workspace__action-button"
+                onClick={handleSaveChanges}
+              >
                 Save Product
               </button>
             </>

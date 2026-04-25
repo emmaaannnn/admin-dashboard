@@ -55,10 +55,21 @@
   flex-wrap: wrap;
 }
 
+.product-row__copy-top {
+  display: grid;
+  align-items: start;
+  min-height: 1.45rem;
+  gap: 0.12rem;
+}
+
 .product-row__slug,
 .product-row__meta-line span {
   color: var(--text-muted);
   font-size: 0.68rem;
+}
+
+.product-row__slug {
+  display: block;
 }
 
 .product-row__image-frame {
@@ -110,26 +121,29 @@
 
 .product-row__expanded {
   display: grid;
-  gap: 0.35rem;
-  padding: 0.12rem 0 0.4rem 0;
+  gap: 0.55rem;
+  padding: 0.45rem 0 0.6rem 0;
+  border-top: 1px solid rgba(214, 206, 193, 0.55);
 }
 
 .product-row__expanded-top {
   display: flex;
   align-items: end;
   justify-content: space-between;
-  gap: 0.45rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .product-row__expanded-actions,
 .product-row__field {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.55rem;
 }
 
 .product-row__field {
   min-width: 0;
+  flex-wrap: wrap;
 }
 
 .product-row__field span,
@@ -141,19 +155,26 @@
   font-size: 0.6rem;
 }
 
-.product-row__field select,
-.product-row__money-field input,
-.product-row__stock-stepper input {
-  border: none;
-  border-bottom: 1px solid rgba(23, 24, 22, 0.08);
-  background: transparent;
-  padding: 0.12rem 0;
+.product-row__control {
+  min-height: 2.75rem;
+  border: 1px solid rgba(23, 24, 22, 0.12);
+  background: rgba(247, 244, 239, 0.94);
+  padding: 0.7rem 0.85rem;
   outline: none;
+  color: var(--text-main);
+  border-radius: 2px;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.product-row__control:focus {
+  border-color: rgba(78, 97, 118, 0.42);
+  box-shadow: 0 0 0 3px rgba(102, 120, 141, 0.12);
+  background: #fbf8f3;
 }
 
 .product-row__quick-grid {
   display: grid;
-  gap: 0.18rem;
+  gap: 0.32rem;
 }
 
 .product-row__quick-head,
@@ -162,7 +183,7 @@
 }
 
 .product-row__quick-item {
-  padding-top: 0.18rem;
+  padding: 0.55rem 0 0;
   border-top: 1px solid rgba(214, 206, 193, 0.55);
 }
 
@@ -175,7 +196,7 @@
 .product-row__stock-stepper {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.4rem;
 }
 
 .product-row__money-field span {
@@ -188,16 +209,46 @@
   min-width: 0;
 }
 
-.product-row__stock-stepper button {
-  border: none;
-  background: transparent;
-  color: var(--accent-strong);
-  padding: 0;
+.product-row__stock-stepper {
+  justify-content: flex-start;
 }
 
 .product-row__stock-stepper input {
-  width: 2rem;
+  width: 3.5rem;
   text-align: center;
+}
+
+.product-row__step-button,
+.product-row__action-button {
+  min-height: 2.75rem;
+}
+
+.product-row__step-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  border: 1px solid rgba(78, 97, 118, 0.18);
+  background: rgba(102, 120, 141, 0.1);
+  color: var(--accent-strong);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.product-row__step-button:hover,
+.product-row__action-button:hover {
+  filter: brightness(0.98);
+}
+
+.product-row__step-button:focus,
+.product-row__action-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 120, 141, 0.12);
+}
+
+.product-row__action-button {
+  padding-inline: 1rem;
+  border-width: 1px;
 }
 
 @media (max-width: 980px) {
@@ -213,5 +264,15 @@
   .product-row__field {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .product-row__copy-top {
+    min-height: 0;
+  }
+
+  .product-row__action-button,
+  .product-row__step-button,
+  .product-row__control {
+    width: 100%;
   }
 }

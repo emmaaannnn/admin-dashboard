@@ -17,7 +17,7 @@ function ProductEditorCard({
         {actionLabel ? (
           <button
             type="button"
-            className="utility-button"
+            className="utility-button editor-card__action-button"
             onClick={onAction}
             disabled={!onAction}
           >

@@ -77,7 +77,6 @@ function ProductTable({
               <div className="product-row__copy">
                 <div className="product-row__copy-top">
                   <h3>{product.name}</h3>
-                  {productIsOnSale ? <span className="status-pill status-pill--sale">Sale</span> : null}
                   <span className="product-row__slug">/{product.slug}</span>
                 </div>
                 <div className="product-row__meta-line">
@@ -115,6 +114,7 @@ function ProductTable({
                 <label className="product-row__field">
                   <span>Status</span>
                   <select
+                    className="product-row__control"
                     value={product.status}
                     onChange={(event) =>
                       onQuickProductChange(product.id, "status", event.target.value)
@@ -128,6 +128,7 @@ function ProductTable({
                 <label className="product-row__field">
                   <span>Drop</span>
                   <select
+                    className="product-row__control"
                     value={product.drop_id}
                     onChange={(event) =>
                       onQuickProductChange(product.id, "drop_id", event.target.value)
@@ -142,12 +143,15 @@ function ProductTable({
                 </label>
 
                 <div className="product-row__expanded-actions">
-                  <Link to={`/products/${product.id}`} className="utility-button">
+                  <Link
+                    to={`/products/${product.id}`}
+                    className="utility-button product-row__action-button"
+                  >
                     Full page
                   </Link>
                   <button
                     type="button"
-                    className="utility-button utility-button--danger"
+                    className="utility-button utility-button--danger product-row__action-button"
                     onClick={() => onRemoveProduct(product.id)}
                   >
                     Remove
@@ -174,6 +178,7 @@ function ProductTable({
                     <label className="product-row__money-field">
                       <span>$</span>
                       <input
+                        className="product-row__control"
                         type="number"
                         min="0"
                         value={variant.price_aud}
@@ -186,6 +191,7 @@ function ProductTable({
                     <label className="product-row__money-field">
                       <span>$</span>
                       <input
+                        className="product-row__control"
                         type="number"
                         min="0"
                         value={variant.compare_at_price_aud ?? ""}
@@ -204,6 +210,8 @@ function ProductTable({
                     <div className="product-row__stock-stepper">
                       <button
                         type="button"
+                        className="product-row__step-button"
+                        aria-label={`Decrease stock for ${variant.color} ${variant.size}`}
                         onClick={() =>
                           onQuickVariantChange(
                             product.id,
@@ -216,6 +224,7 @@ function ProductTable({
                         -
                       </button>
                       <input
+                        className="product-row__control"
                         type="number"
                         min="0"
                         value={variant.inventory_quantity}
@@ -230,6 +239,8 @@ function ProductTable({
                       />
                       <button
                         type="button"
+                        className="product-row__step-button"
+                        aria-label={`Increase stock for ${variant.color} ${variant.size}`}
                         onClick={() =>
                           onQuickVariantChange(
                             product.id,

@@ -41,6 +41,11 @@
   white-space: nowrap;
 }
 
+.product-workspace__action-button {
+  min-height: 2.75rem;
+  padding-inline: 1rem;
+}
+
 @media (max-width: 640px) {
   .product-workspace__toolbar,
   .product-workspace__actions {

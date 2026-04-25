@@ -9,7 +9,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant }) {
           <h3>Product Variants</h3>
           <span className="variants-card__copy">Inventory and pricing</span>
         </div>
-        <button type="button" className="utility-button" onClick={onAddVariant}>
+        <button type="button" className="utility-button variant-table__action-button" onClick={onAddVariant}>
           Add Variant
         </button>
       </div>
@@ -76,6 +76,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant }) {
               <button
                 type="button"
                 className="variant-stepper__button"
+                aria-label={`Decrease stock for ${variant.sku || `${variant.color} ${variant.size}`}`}
                 onClick={() =>
                   onVariantChange(
                     variant.id,
@@ -98,6 +99,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant }) {
               <button
                 type="button"
                 className="variant-stepper__button"
+                aria-label={`Increase stock for ${variant.sku || `${variant.color} ${variant.size}`}`}
                 onClick={() =>
                   onVariantChange(
                     variant.id,

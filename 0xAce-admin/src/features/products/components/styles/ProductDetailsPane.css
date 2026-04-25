@@ -14,6 +14,7 @@
 .detail-actions {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .field-stack {
@@ -31,17 +32,27 @@
 .editor-select,
 .editor-textarea {
   width: 100%;
-  padding: 0.38rem 0;
-  border: none;
-  border-bottom: 1px solid rgba(23, 24, 22, 0.08);
-  background: transparent;
+  min-height: 2.75rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgba(23, 24, 22, 0.12);
+  background: rgba(247, 244, 239, 0.94);
   color: var(--text-main);
   outline: none;
+  border-radius: 2px;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.editor-input:focus,
+.editor-select:focus,
+.editor-textarea:focus {
+  border-color: rgba(78, 97, 118, 0.42);
+  box-shadow: 0 0 0 3px rgba(102, 120, 141, 0.12);
+  background: #fbf8f3;
 }
 
 .editor-textarea {
   resize: vertical;
-  min-height: 5rem;
+  min-height: 7rem;
 }
 
 @media (max-width: 980px) {
