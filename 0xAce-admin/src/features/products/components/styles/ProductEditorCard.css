@@ -24,7 +24,8 @@
   gap: 0.6rem;
 }
 
-.editor-fields div {
+.editor-fields > .field-stack,
+.editor-fields > div {
   display: grid;
   gap: 0.4rem;
   padding-bottom: 0.8rem;

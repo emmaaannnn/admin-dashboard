@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { formatMoney } from "../../../shared/lib/formatters";
-import { isProductOnSale, isVariantOnSale } from "../lib/productsState";
+import { getProductFitLabel, isProductOnSale, isVariantOnSale } from "../lib/productsState";
 import "./styles/ProductTable.css";
 
 function getPriceLabel(variants) {
@@ -80,7 +80,7 @@ function ProductTable({
                   <span className="product-row__slug">/{product.slug}</span>
                 </div>
                 <div className="product-row__meta-line">
-                  <span>{product.size_guide.fit}</span>
+                  <span>{getProductFitLabel(product)}</span>
                   <span>{product.inventoryCount} units</span>
                 </div>
               </div>
@@ -121,6 +121,7 @@ function ProductTable({
                     }
                   >
                     <option value="active">Active</option>
+                    <option value="sold_out">Sold out</option>
                     <option value="archived">Archived</option>
                   </select>
                 </label>

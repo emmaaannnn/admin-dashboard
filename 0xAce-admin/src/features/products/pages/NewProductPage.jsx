@@ -30,16 +30,6 @@ function NewProductPage() {
     }));
   };
 
-  const handleSizeGuideChange = (field, value) => {
-    setDraftProduct((currentProduct) => ({
-      ...currentProduct,
-      size_guide: {
-        ...currentProduct.size_guide,
-        [field]: value,
-      },
-    }));
-  };
-
   const handleVariantChange = (variantId, field, value) => {
     setDraftProduct((currentProduct) => ({
       ...currentProduct,
@@ -112,7 +102,6 @@ function NewProductPage() {
         product={draftProduct}
         drops={drops}
         onProductChange={handleProductChange}
-        onSizeGuideChange={handleSizeGuideChange}
         onVariantChange={handleVariantChange}
         onAddVariant={handleAddVariant}
         kicker="New product draft"

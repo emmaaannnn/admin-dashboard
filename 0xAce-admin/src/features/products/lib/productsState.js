@@ -1,5 +1,56 @@
 export const LOW_STOCK_THRESHOLD = 4;
 
+export function getProductFitLabel(product) {
+  const sizes = Array.from(
+    new Set(
+      (product?.variants ?? [])
+        .map((variant) => variant.size)
+        .filter(Boolean)
+    )
+  );
+
+  if (!sizes.length) {
+    return "One size";
+  }
+
+  return `Available sizes: ${sizes.join(", ")}`;
+}
+
+function normalizeSizeGuide(sizeGuide) {
+  if (!sizeGuide || sizeGuide === "null") {
+    return {
+      fit: "One size",
+      note: "No size guide provided.",
+    };
+  }
+
+  if (typeof sizeGuide === "string") {
+    try {
+      const parsedSizeGuide = JSON.parse(sizeGuide);
+      const availableSizes = Array.isArray(parsedSizeGuide?.available_sizes)
+        ? parsedSizeGuide.available_sizes.filter(Boolean)
+        : [];
+
+      return {
+        fit: availableSizes.length ? `Available sizes: ${availableSizes.join(", ")}` : "Size guide available",
+        note: availableSizes.length
+          ? "Sizing imported from mock data. Edit for detailed fit guidance."
+          : "No size guide provided.",
+      };
+    } catch {
+      return {
+        fit: "Size guide available",
+        note: sizeGuide,
+      };
+    }
+  }
+
+  return {
+    fit: sizeGuide.fit ?? "Standard fit",
+    note: sizeGuide.note ?? "No size guide provided.",
+  };
+}
+
 export function getInventoryStatus(quantity) {
   if (quantity <= 0) {
     return "sold_out";
@@ -26,7 +77,9 @@ export function isProductOnSale(product) {
 export function cloneProduct(product) {
   return {
     ...product,
-    size_guide: { ...product.size_guide },
+    subtitle: product.subtitle ?? "",
+    description: product.description ?? "",
+    size_guide: normalizeSizeGuide(product.size_guide),
     variants: product.variants.map((variant) => ({ ...variant })),
     images: product.images.map((image) => ({ ...image })),
   };
@@ -107,6 +160,8 @@ export function createEmptyProduct(drops, productCount) {
       drop_id: primaryDrop?.id ?? "",
       slug: `new-product-${productCount + 1}`,
       name: "New Product",
+      subtitle: "",
+      description: "",
       status: "archived",
       size_guide: {
         fit: "Relaxed fit",
