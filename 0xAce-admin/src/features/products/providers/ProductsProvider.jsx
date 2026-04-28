@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useEffect, useState } from "react";
 import mockSupabaseData from "../../../data/mock/supabaseData";
 import {
   buildDrops,
@@ -8,16 +8,87 @@ import {
   hydrateProduct,
   refreshProductsWithDrops,
 } from "../lib/productsState";
+import supabase from "../../../shared/lib/supabaseClient";
 
 const ProductsContext = createContext(null);
 
-function ProductsProvider({ children }) {
-  const [drops, setDrops] = useState(() => buildDrops(mockSupabaseData));
-  const [products, setProducts] = useState(() => {
-    const initialDrops = buildDrops(mockSupabaseData);
-    return buildProducts(mockSupabaseData, initialDrops);
-  });
 
+function ProductsProvider({ children }) {
+  const [drops, setDrops] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchData() {
+      // If supabase is not configured, use mock data
+      if (!supabase || !supabase.from) {
+        const initialDrops = buildDrops(mockSupabaseData);
+        if (isMounted) {
+          setDrops(initialDrops);
+          setProducts(buildProducts(mockSupabaseData, initialDrops));
+          setLoading(false);
+        }
+        return;
+      }
+
+      // Fetch from Supabase
+      try {
+        const [dropsRes, productsRes, variantsRes, imagesRes] = await Promise.all([
+          supabase.from("drops").select("*"),
+          supabase.from("products").select("*"),
+          supabase.from("product_variants").select("*"),
+          supabase.from("product_images").select("*"),
+        ]);
+
+        if (
+          dropsRes.error ||
+          productsRes.error ||
+          variantsRes.error ||
+          imagesRes.error
+        ) {
+          // fallback to mock data if any error
+          const initialDrops = buildDrops(mockSupabaseData);
+          if (isMounted) {
+            setDrops(initialDrops);
+            setProducts(buildProducts(mockSupabaseData, initialDrops));
+            setLoading(false);
+          }
+          return;
+        }
+
+        // Compose data in the same structure as mockSupabaseData
+        const data = {
+          drops: dropsRes.data,
+          products: productsRes.data,
+          product_variants: variantsRes.data,
+          product_images: imagesRes.data,
+        };
+        const initialDrops = buildDrops(data);
+        if (isMounted) {
+          setDrops(initialDrops);
+          setProducts(buildProducts(data, initialDrops));
+          setLoading(false);
+        }
+      } catch (e) {
+        // fallback to mock data on error
+        const initialDrops = buildDrops(mockSupabaseData);
+        if (isMounted) {
+          setDrops(initialDrops);
+          setProducts(buildProducts(mockSupabaseData, initialDrops));
+          setLoading(false);
+        }
+      }
+    }
+    fetchData();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+
+  // The following create/update/remove methods only update local state.
+  // For full Supabase integration, you would also add DB mutations here.
   const createProduct = (productDraft) => {
     const nextProduct = hydrateProduct(cloneProduct(productDraft), drops);
     setProducts((currentProducts) => [nextProduct, ...currentProducts]);
@@ -86,10 +157,13 @@ function ProductsProvider({ children }) {
     });
   };
 
+
+  // The create/update/remove functions are stable and do not change between renders
   const value = useMemo(
     () => ({
       products,
       drops,
+      loading,
       getProductById: (productId) =>
         products.find((product) => product.id === productId) ?? null,
       getDropById: (dropId) => drops.find((drop) => drop.id === dropId) ?? null,
@@ -100,7 +174,7 @@ function ProductsProvider({ children }) {
       updateDrop,
       removeDrop,
     }),
-    [drops, products]
+    [drops, products, loading]
   );
 
   return (
