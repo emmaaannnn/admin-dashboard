@@ -1,13 +1,13 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import AdminAppShell from "../shared/components/AdminAppShell";
-import LoginPage from "../features/auth/pages/LoginPage";
+import LoginPage from "../features/auth/LoginPage";
 import ProductsLayout from "../features/products/pages/ProductsLayout";
 import ProductsOverviewPage from "../features/products/pages/ProductsOverviewPage";
 import ProductDetailPage from "../features/products/pages/ProductDetailPage";
 import NewProductPage from "../features/products/pages/NewProductPage";
 import EditDropsPage from "../features/products/pages/EditDropsPage";
 import OrdersPage from "../features/orders/pages/OrdersPage";
-import WebsiteSettingsPage from "../features/website/pages/WebsiteSettingsPage";
+import WebsiteSettingsPage from "../features/website/WebsiteSettingsPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 const router = createBrowserRouter([

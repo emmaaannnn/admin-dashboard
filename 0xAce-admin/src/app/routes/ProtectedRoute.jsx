@@ -3,7 +3,11 @@ import { useAdminSession } from "../providers/AdminSessionProvider";
 
 function ProtectedRoute() {
   const location = useLocation();
-  const { isAuthenticated } = useAdminSession();
+  const { isAuthenticated, isHydrated } = useAdminSession();
+
+  if (!isHydrated) {
+    return null;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace state={{ from: location }} />;

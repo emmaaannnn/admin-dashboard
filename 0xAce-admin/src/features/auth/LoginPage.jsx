@@ -1,18 +1,24 @@
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useAdminSession } from "../../../app/providers/AdminSessionProvider";
+import { useAdminSession } from "../../app/providers/AdminSessionProvider";
 import "./LoginPage.css";
 
 function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, login } = useAdminSession();
+  const { isAuthenticated, isHydrated, login } = useAdminSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const nextPath = location.state?.from?.pathname || "/products";
+
+  if (!isHydrated) {
+    return null;
+  }
+
   if (isAuthenticated) {
-    return <Navigate to="/products" replace />;
+    return <Navigate to={nextPath} replace />;
   }
 
   const handleSubmit = (event) => {
@@ -25,7 +31,6 @@ function LoginPage() {
       return;
     }
 
-    const nextPath = location.state?.from?.pathname || "/products";
     navigate(nextPath, { replace: true });
   };
 
