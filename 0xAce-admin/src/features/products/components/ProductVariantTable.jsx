@@ -1,7 +1,7 @@
 import { isVariantOnSale } from "../lib/productsState";
 import "./styles/ProductVariantTable.css";
 
-function ProductVariantTable({ variants, onVariantChange, onAddVariant }) {
+function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDeleteVariant }) {
   return (
     <section className="variants-card">
       <div className="variants-card__header">
@@ -19,10 +19,11 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant }) {
           <span>SKU</span>
           <span>Color</span>
           <span>Size</span>
-          <span>Price</span>
-          <span>Compare</span>
+          <span style={{ minWidth: 60, maxWidth: 70 }}>Price</span>
+          <span style={{ minWidth: 60, maxWidth: 70 }}>Compare</span>
           <span>Stock</span>
-          <span>Status</span>
+          <span style={{ minWidth: 140, maxWidth: 200 }}>Status</span>
+          <span></span> {/* For delete button */}
         </div>
 
         {variants.map((variant) => (
@@ -45,7 +46,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant }) {
               value={variant.size}
               onChange={(event) => onVariantChange(variant.id, "size", event.target.value)}
             />
-            <label className="variant-table__input-shell">
+            <label className="variant-table__input-shell" style={{ minWidth: 60, maxWidth: 70 }}>
               <span className="variant-table__input-prefix">$</span>
               <input
                 className="variant-table__input"
@@ -58,7 +59,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant }) {
                 }
               />
             </label>
-            <label className="variant-table__input-shell">
+            <label className="variant-table__input-shell" style={{ minWidth: 60, maxWidth: 70 }}>
               <span className="variant-table__input-prefix">$</span>
               <input
                 className="variant-table__input"
@@ -111,11 +112,20 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant }) {
                 +
               </button>
             </div>
-            <div className="variant-table__status">
+            <div className="variant-table__status" style={{ minWidth: 140, maxWidth: 200, display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
               {isVariantOnSale(variant) ? <span className="status-pill status-pill--sale">Sale</span> : null}
               <span className={`status-pill status-pill--${variant.inventory_status}`}>
                 {variant.inventory_status.replace("_", " ")}
               </span>
+              <button
+                type="button"
+                className="utility-button variant-table__delete-button"
+                aria-label={`Delete variant ${variant.sku || `${variant.color} ${variant.size}`}`}
+                onClick={() => onDeleteVariant(variant.id)}
+                style={{ marginLeft: 8 }}
+              >
+                🗑️
+              </button>
             </div>
           </div>
         ))}

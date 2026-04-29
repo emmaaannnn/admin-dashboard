@@ -12,7 +12,7 @@ function navigateBack(navigate) {
 function ProductDetailPage() {
   const navigate = useNavigate();
   const { productId } = useParams();
-  const { drops, getProductById, updateProduct } = useProducts();
+  const { drops, getProductById, updateProduct, removeProduct } = useProducts();
   const sourceProduct = getProductById(productId);
   const [draftProduct, setDraftProduct] = useState(() =>
     sourceProduct ? cloneProduct(sourceProduct) : null
@@ -21,6 +21,20 @@ function ProductDetailPage() {
   useEffect(() => {
     setDraftProduct(sourceProduct ? cloneProduct(sourceProduct) : null);
   }, [sourceProduct]);
+
+  const handleDeleteProduct = () => {
+    if (window.confirm("Are you sure you want to delete this product and all its images? This cannot be undone.")) {
+      removeProduct(productId);
+      navigate("/products");
+    }
+  };
+
+  const handleDeleteVariant = (variantId) => {
+    setDraftProduct((currentProduct) => ({
+      ...currentProduct,
+      variants: currentProduct.variants.filter((variant) => variant.id !== variantId),
+    }));
+  };
 
   const hasUnsavedChanges = useMemo(() => {
     if (!sourceProduct || !draftProduct) {
@@ -132,6 +146,14 @@ function ProductDetailPage() {
         </div>
 
         <div className="product-workspace__actions">
+          <button
+            type="button"
+            className="danger-button product-workspace__action-button"
+            onClick={handleDeleteProduct}
+            style={{ marginRight: 12 }}
+          >
+            Delete Product
+          </button>
           {hasUnsavedChanges ? (
             <>
               <button
@@ -159,6 +181,7 @@ function ProductDetailPage() {
         onProductChange={handleProductChange}
         onVariantChange={handleVariantChange}
         onAddVariant={handleAddVariant}
+        onDeleteVariant={handleDeleteVariant}
       />
     </div>
   );

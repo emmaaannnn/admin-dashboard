@@ -163,6 +163,7 @@ function ProductDetailsPane({
   onProductChange,
   onVariantChange,
   onAddVariant,
+  onDeleteVariant,
   kicker = "Active selection",
   title = product.name,
 }) {
@@ -282,6 +283,7 @@ function ProductDetailsPane({
         variants={product.variants}
         onVariantChange={onVariantChange}
         onAddVariant={onAddVariant}
+        onDeleteVariant={onDeleteVariant}
       />
     </section>
   );

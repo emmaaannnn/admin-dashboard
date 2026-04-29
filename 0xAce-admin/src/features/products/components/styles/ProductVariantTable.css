@@ -22,9 +22,10 @@
 .variant-table__header,
 .variant-table__row {
   display: grid;
-  grid-template-columns: 1.35fr 1fr 0.7fr 1fr 1fr 0.7fr 1fr;
+  grid-template-columns: 1.35fr 1fr 0.7fr 1fr 1fr 0.7fr 1.5fr;
   gap: 0.5rem;
   align-items: center;
+  width: 100%;
 }
 
 .variant-table__row {
