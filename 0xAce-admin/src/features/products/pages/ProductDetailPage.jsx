@@ -150,7 +150,7 @@ function ProductDetailPage() {
             type="button"
             className="danger-button product-workspace__action-button"
             onClick={handleDeleteProduct}
-            style={{ marginRight: 12 }}
+            style={{ marginRight: 12, background: '#ffeded', color: '#c00', border: '1px solid #ffb3b3', fontWeight: 600, borderRadius: 3, padding: '0.5rem 1.1rem', minWidth: 110, transition: 'background 0.15s, color 0.15s, border 0.15s' }}
           >
             Delete Product
           </button>

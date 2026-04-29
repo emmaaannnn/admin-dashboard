@@ -19,11 +19,11 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
           <span>SKU</span>
           <span>Color</span>
           <span>Size</span>
-          <span style={{ minWidth: 60, maxWidth: 70 }}>Price</span>
-          <span style={{ minWidth: 60, maxWidth: 70 }}>Compare</span>
-          <span>Stock</span>
-          <span style={{ minWidth: 140, maxWidth: 200 }}>Status</span>
-          <span></span> {/* For delete button */}
+          <span className="variant-table__header-price">Price</span>
+          <span className="variant-table__header-compare">Compare</span>
+          <span className="variant-table__header-stock">Stock</span>
+          <span className="variant-table__header-status">Status</span>
+          <span className="variant-table__header-delete">Action</span>
         </div>
 
         {variants.map((variant) => (
@@ -46,10 +46,10 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
               value={variant.size}
               onChange={(event) => onVariantChange(variant.id, "size", event.target.value)}
             />
-            <label className="variant-table__input-shell" style={{ minWidth: 60, maxWidth: 70 }}>
+            <label className="variant-table__input-shell variant-table__price-cell">
               <span className="variant-table__input-prefix">$</span>
               <input
-                className="variant-table__input"
+                className="variant-table__input variant-table__input--no-spin"
                 type="number"
                 min="0"
                 step="1"
@@ -57,12 +57,14 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
                 onChange={(event) =>
                   onVariantChange(variant.id, "price_aud", event.target.value)
                 }
+                inputMode="numeric"
+                pattern="[0-9]*"
               />
             </label>
-            <label className="variant-table__input-shell" style={{ minWidth: 60, maxWidth: 70 }}>
+            <label className="variant-table__input-shell variant-table__compare-cell">
               <span className="variant-table__input-prefix">$</span>
               <input
-                className="variant-table__input"
+                className="variant-table__input variant-table__input--no-spin"
                 type="number"
                 min="0"
                 step="1"
@@ -71,9 +73,11 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
                 onChange={(event) =>
                   onVariantChange(variant.id, "compare_at_price_aud", event.target.value)
                 }
+                inputMode="numeric"
+                pattern="[0-9]*"
               />
             </label>
-            <div className="variant-stepper">
+            <div className="variant-stepper variant-table__stock-cell">
               <button
                 type="button"
                 className="variant-stepper__button"
@@ -89,13 +93,15 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
                 -
               </button>
               <input
-                className="variant-stepper__input"
+                className="variant-stepper__input variant-table__input--no-spin"
                 type="number"
                 min="0"
                 value={variant.inventory_quantity}
                 onChange={(event) =>
                   onVariantChange(variant.id, "inventory_quantity", event.target.value)
                 }
+                inputMode="numeric"
+                pattern="[0-9]*"
               />
               <button
                 type="button"
@@ -112,19 +118,20 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
                 +
               </button>
             </div>
-            <div className="variant-table__status" style={{ minWidth: 140, maxWidth: 200, display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
+            <div className="variant-table__status">
               {isVariantOnSale(variant) ? <span className="status-pill status-pill--sale">Sale</span> : null}
               <span className={`status-pill status-pill--${variant.inventory_status}`}>
                 {variant.inventory_status.replace("_", " ")}
               </span>
+            </div>
+            <div className="variant-table__delete-cell">
               <button
                 type="button"
-                className="utility-button variant-table__delete-button"
+                className="danger-button variant-table__delete-button"
                 aria-label={`Delete variant ${variant.sku || `${variant.color} ${variant.size}`}`}
                 onClick={() => onDeleteVariant(variant.id)}
-                style={{ marginLeft: 8 }}
               >
-                🗑️
+                Delete
               </button>
             </div>
           </div>
