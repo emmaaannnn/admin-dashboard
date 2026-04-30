@@ -1,0 +1,133 @@
+name: Task Card
+description: Create a structured implementation task for contributors.
+title: "[Task]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to create implementation-ready tasks for contributors.
+
+        Keep the scope narrow, define what success looks like, and point to the most relevant files when possible.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      description: One-sentence description of the task.
+      placeholder: Add delete confirmation to product drop removal flow
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is wrong, missing, or unclear today?
+      placeholder: |
+        The current drop deletion flow removes the drop immediately after confirmation.
+        Contributors need a safer experience with a clearer warning state.
+    validations:
+      required: true
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What outcome should this task deliver?
+      placeholder: |
+        Add a clearer destructive-action confirmation flow so admins understand the impact before deleting a drop.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: task_type
+    attributes:
+      label: Task Type
+      options:
+        - UI polish
+        - Bug fix
+        - Refactor
+        - New feature
+        - Documentation
+        - Test coverage
+    validations:
+      required: true
+
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty
+      options:
+        - Starter
+        - Small
+        - Medium
+        - Stretch
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope
+      description: List the intended boundaries of the task.
+      placeholder: |
+        In scope:
+        - Update the delete button flow on the drop edit page
+        - Improve warning copy before confirming deletion
+
+        Out of scope:
+        - Backend authorization changes
+        - Audit logging
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation_notes
+    attributes:
+      label: Suggested Starting Points
+      description: Relevant files, components, commands, or implementation hints.
+      placeholder: |
+        Relevant files:
+        - src/features/products/pages/EditDropsPage.jsx
+        - src/features/products/pages/styles/ProductFormPage.css
+
+        Notes:
+        - Reuse existing destructive button styles where possible
+        - Keep the change aligned with docs/admin-style-guide.md
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Concrete checks that define done.
+      placeholder: |
+        - Admin sees a clearer delete warning before confirming
+        - The warning copy explains what happens to assigned products
+        - Styling matches the current admin design system
+        - No existing drop-edit behavior regresses
+    validations:
+      required: true
+
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing / Validation
+      description: How should the contributor verify the change?
+      placeholder: |
+        - Run npm run build
+        - Manually test delete flow on an existing drop
+        - Confirm mobile layout still works
+    validations:
+      required: true
+
+  - type: textarea
+    id: handoff
+    attributes:
+      label: Handoff Notes
+      description: Anything reviewers or contributors should watch for.
+      placeholder: |
+        Watch for destructive action spacing and confirm the warning copy matches actual product behavior.
+    validations:
+      required: false
