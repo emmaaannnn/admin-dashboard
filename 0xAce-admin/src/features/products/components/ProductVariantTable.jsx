@@ -127,7 +127,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
             <div className="variant-table__delete-cell">
               <button
                 type="button"
-                className="danger-button variant-table__delete-button"
+                className="utility-button utility-button--danger variant-table__delete-button"
                 aria-label={`Delete variant ${variant.sku || `${variant.color} ${variant.size}`}`}
                 onClick={() => onDeleteVariant(variant.id)}
               >

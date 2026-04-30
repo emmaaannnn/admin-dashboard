@@ -58,26 +58,7 @@ function createNotifications() {
       };
     });
 
-  const lowStockNotifications = mockSupabaseData.product_variants
-    .filter((variant) => variant.inventory_quantity <= 4)
-    .map((variant) => {
-      const product = mockSupabaseData.products.find(
-        (entry) => entry.id === variant.product_id
-      );
-
-      return {
-        id: `stock-${variant.id}`,
-        tone: variant.inventory_quantity === 0 ? "danger" : "warning",
-        title:
-          variant.inventory_quantity === 0
-            ? `${product?.name ?? "Item"} is sold out`
-            : `${product?.name ?? "Item"} is running low`,
-        detail: `${variant.color} / ${variant.size} has ${variant.inventory_quantity} units remaining.`,
-        timeLabel: variant.inventory_quantity === 0 ? "Restock needed" : "Low stock",
-      };
-    });
-
-  return [...orderNotifications, ...lowStockNotifications].slice(0, 6);
+  return orderNotifications.slice(0, 6);
 }
 
 function AdminShellProvider({ children }) {

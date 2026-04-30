@@ -14,12 +14,12 @@
 .editor-card,
 .variants-card,
 .menu-card {
-  padding: 1.15rem 1.2rem;
-  border: 1px solid rgba(255, 255, 255, 0.78);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.58);
+  padding: 1.2rem 1.25rem;
+  border: 1px solid var(--control-border);
+  border-radius: var(--card-radius);
+  background: rgba(255, 255, 255, 0.78);
   box-shadow:
-    0 14px 34px rgba(104, 91, 77, 0.08),
+    0 16px 36px rgba(15, 23, 42, 0.06),
     inset 0 1px 0 rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(18px);
 }
@@ -62,12 +62,73 @@
   align-items: center;
 }
 
+.page-header-card--error {
+  border-color: rgba(125, 87, 71, 0.24);
+  background: rgba(255, 247, 243, 0.82);
+}
+
 .data-card__header,
 .detail-panel__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.field-stack {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.field-stack--wide {
+  grid-column: 1 / -1;
+}
+
+.field-stack--compact,
+.field-stack--plain {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.editor-input,
+.editor-select,
+.editor-textarea {
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0.82rem 1rem;
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
+  color: var(--text-main);
+  outline: none;
+  border-radius: var(--control-radius);
+  box-shadow: var(--control-shadow);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease,
+    transform 160ms ease;
+}
+
+.editor-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%236f7782' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M1 1.25 6 6l5-4.75'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 12px 8px;
+}
+
+.editor-input:focus,
+.editor-select:focus,
+.editor-textarea:focus {
+  border-color: var(--control-border-strong);
+  box-shadow: var(--control-shadow-focus);
+  background: var(--control-bg-strong);
+  transform: translateY(-1px);
+}
+
+.editor-textarea {
+  resize: vertical;
+  min-height: 7rem;
 }
 
 .data-grid {

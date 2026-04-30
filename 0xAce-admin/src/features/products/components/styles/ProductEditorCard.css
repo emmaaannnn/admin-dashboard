@@ -1,58 +1,22 @@
 .editor-card {
   display: grid;
-  gap: 0.65rem;
+  gap: 1rem;
 }
 
 .editor-card__header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 0.8rem;
+  gap: 1rem;
 }
 
 .editor-card__action-button {
-  min-height: 2.75rem;
-  padding-inline: 1rem;
-}
-
-.editor-card--media {
-  align-content: start;
+  min-height: var(--control-height);
+  padding-inline: 1.05rem;
 }
 
 .editor-fields {
   display: grid;
-  gap: 0.6rem;
-}
-
-.editor-fields > .field-stack,
-.editor-fields > div {
-  display: grid;
-  gap: 0.4rem;
-  padding-bottom: 0.8rem;
-  border-bottom: 1px solid var(--surface-border);
-}
-
-.media-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
-}
-
-.media-thumb,
-.media-thumb-frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.media-thumb-frame {
-  display: grid;
-  place-items: center;
-  min-height: 94px;
-  border: 1px dashed var(--surface-border);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.76rem;
 }
 
 @media (max-width: 640px) {

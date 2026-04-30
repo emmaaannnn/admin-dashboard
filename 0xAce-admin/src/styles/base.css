@@ -1,19 +1,29 @@
 :root {
-  font-family: "Avenir Next", "Helvetica Neue", sans-serif;
-  --page-bg: #f3efe7;
-  --sidebar-bg: #ede6dc;
-  --surface: #f7f4ef;
-  --surface-muted: #f0ebe3;
-  --surface-border: #d6cec1;
-  --text-main: #171816;
-  --text-muted: #6f6a60;
-  --accent: #66788d;
-  --accent-strong: #4e6176;
-  --accent-soft: #dbe3eb;
-  --warning-strong: #8e674f;
-  --warning-soft: #ece0d5;
-  --danger-soft: #eedfd7;
-  --danger-strong: #7d5747;
+  font-family: "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --page-bg: #f5f5f7;
+  --sidebar-bg: #efeff2;
+  --surface: #ffffff;
+  --surface-muted: #f7f7f9;
+  --surface-border: rgba(15, 23, 42, 0.08);
+  --text-main: #16181d;
+  --text-muted: #6f7782;
+  --accent: #1f2328;
+  --accent-strong: #111418;
+  --accent-soft: #eef1f5;
+  --warning-strong: #9b6c2f;
+  --warning-soft: #f6ead9;
+  --danger-soft: #fff0f0;
+  --danger-strong: #c73434;
+  --control-height: 2.95rem;
+  --control-radius: 18px;
+  --button-radius: 999px;
+  --card-radius: 28px;
+  --control-bg: rgba(255, 255, 255, 0.82);
+  --control-bg-strong: rgba(255, 255, 255, 0.98);
+  --control-border: rgba(15, 23, 42, 0.09);
+  --control-border-strong: rgba(15, 23, 42, 0.18);
+  --control-shadow: 0 1px 0 rgba(255, 255, 255, 0.8), 0 8px 20px rgba(15, 23, 42, 0.05);
+  --control-shadow-focus: 0 0 0 4px rgba(15, 23, 42, 0.07), 0 10px 26px rgba(15, 23, 42, 0.08);
 }
 
 * {
@@ -31,6 +41,8 @@ body {
   background: var(--page-bg);
   color: var(--text-main);
   font-family: inherit;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button,
@@ -85,8 +97,9 @@ a {
 .menu-card-label,
 .variants-card__header h3,
 .editor-card__header h3 {
-  font-family: "Iowan Old Style", "Baskerville", "Times New Roman", serif;
-  font-weight: 500;
+  font-family: "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.04em;
 }
 
 .sidebar-brand h2,
@@ -137,9 +150,10 @@ a {
 .status-pill {
   display: inline-flex;
   align-items: center;
-  padding: 0.3rem 0.55rem;
-  border-radius: 2px;
-  font-size: 0.78rem;
+  padding: 0.42rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  font-size: 0.76rem;
   text-transform: capitalize;
 }
 
@@ -182,13 +196,19 @@ a {
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  padding: 0.62rem 0.85rem;
-  border: 1px solid transparent;
-  background: transparent;
+  min-height: var(--control-height);
+  padding: 0.78rem 1.08rem;
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   font-size: 0.72rem;
   line-height: 1;
+  font-weight: 600;
+  border-radius: var(--button-radius);
+  box-shadow: var(--control-shadow);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease,
+    background 160ms ease, color 160ms ease;
 }
 
 .primary-button,
@@ -199,30 +219,47 @@ a {
 
 .primary-button {
   color: #ffffff;
-  background: var(--accent);
+  border-color: rgba(17, 20, 24, 0.95);
+  background: linear-gradient(180deg, #23262c 0%, #111418 100%);
+  box-shadow: 0 14px 28px rgba(17, 20, 24, 0.18);
 }
 
 .secondary-button {
-  color: var(--accent-strong);
-  background: var(--accent-soft);
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .text-button {
-  border-color: rgba(78, 97, 118, 0.18);
-  background: rgba(78, 97, 118, 0.06);
-  color: var(--accent-strong);
+  background: rgba(244, 246, 248, 0.95);
+  color: var(--text-main);
 }
 
 .utility-button {
-  border-color: rgba(23, 24, 22, 0.1);
-  background: rgba(247, 244, 239, 0.78);
+  background: rgba(255, 255, 255, 0.82);
   color: var(--text-main);
 }
 
 .utility-button--danger {
-  border-color: rgba(125, 87, 71, 0.18);
+  border-color: rgba(199, 52, 52, 0.16);
   color: var(--danger-strong);
-  background: rgba(238, 223, 215, 0.55);
+  background: rgba(255, 240, 240, 0.95);
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.text-button:hover,
+.utility-button:hover {
+  transform: translateY(-1px);
+  border-color: var(--control-border-strong);
+  box-shadow: var(--control-shadow-focus);
+}
+
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.text-button:focus-visible,
+.utility-button:focus-visible {
+  outline: none;
+  box-shadow: var(--control-shadow-focus);
 }
 
 .text-button:disabled,

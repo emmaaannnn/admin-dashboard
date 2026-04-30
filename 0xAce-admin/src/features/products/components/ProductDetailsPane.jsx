@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ProductEditorCard from "./ProductEditorCard";
 import ProductVariantTable from "./ProductVariantTable";
-import { getProductFitLabel, isProductOnSale } from "../lib/productsState";
+import { isProductOnSale } from "../lib/productsState";
 import "./styles/ProductDetailsPane.css";
 
 const DESCRIPTION_ACTIONS = [
@@ -168,7 +168,6 @@ function ProductDetailsPane({
   title = product.name,
 }) {
   const productIsOnSale = isProductOnSale(product);
-  const fitLabel = getProductFitLabel(product);
 
   return (
     <section className="detail-panel">
@@ -187,8 +186,9 @@ function ProductDetailsPane({
       </div>
 
       <div className="detail-panel__grid">
-        <ProductEditorCard title="General Information">
-          <div className="editor-fields">
+        <div className="detail-panel__main">
+          <ProductEditorCard title="General Information" className="editor-card--summary">
+            <div className="editor-fields editor-fields--product">
             <label className="field-stack">
               <span>Product name</span>
               <input
@@ -219,53 +219,54 @@ function ProductDetailsPane({
               />
             </label>
 
-            <div className="field-stack field-stack--wide">
-              <span>Description</span>
-              <HtmlDescriptionEditor
-                value={product.description ?? ""}
-                onChange={(nextValue) => onProductChange("description", nextValue)}
-              />
+              <div className="editor-field-row field-stack--wide">
+                <label className="field-stack field-stack--compact">
+                  <span>Drop selection</span>
+                  <select
+                    className="editor-select"
+                    value={product.drop_id}
+                    onChange={(event) => onProductChange("drop_id", event.target.value)}
+                  >
+                    {drops.map((drop) => (
+                      <option key={drop.id} value={drop.id}>
+                        {drop.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="field-stack field-stack--compact">
+                  <span>Status</span>
+                  <select
+                    className="editor-select"
+                    value={product.status}
+                    onChange={(event) => onProductChange("status", event.target.value)}
+                  >
+                    <option value="active">Active</option>
+                    <option value="sold_out">Sold out</option>
+                    <option value="archived">Archived</option>
+                  </select>
+                </label>
+              </div>
             </div>
+          </ProductEditorCard>
 
-            <label className="field-stack field-stack--wide">
-              <span>Fit type</span>
-              <input className="editor-input" type="text" value={fitLabel} readOnly />
-            </label>
-
-            <label className="field-stack">
-              <span>Drop selection</span>
-              <select
-                className="editor-select"
-                value={product.drop_id}
-                onChange={(event) => onProductChange("drop_id", event.target.value)}
-              >
-                {drops.map((drop) => (
-                  <option key={drop.id} value={drop.id}>
-                    {drop.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="field-stack">
-              <span>Status</span>
-              <select
-                className="editor-select"
-                value={product.status}
-                onChange={(event) => onProductChange("status", event.target.value)}
-              >
-                <option value="active">Active</option>
-                <option value="sold_out">Sold out</option>
-                <option value="archived">Archived</option>
-              </select>
-            </label>
-          </div>
-        </ProductEditorCard>
+          <ProductEditorCard title="Description" className="editor-card--description">
+            <div className="editor-fields editor-fields--description">
+              <div className="field-stack field-stack--wide field-stack--plain">
+                <HtmlDescriptionEditor
+                  value={product.description ?? ""}
+                  onChange={(nextValue) => onProductChange("description", nextValue)}
+                />
+              </div>
+            </div>
+          </ProductEditorCard>
+        </div>
 
         <ProductEditorCard
           as="aside"
           title="Media"
-          actionLabel="Upload New"
+          actionLabel="Upload"
           className="editor-card--media"
         >
           <div className="media-grid">

@@ -34,7 +34,7 @@ function normalizeSizeGuide(sizeGuide) {
       return {
         fit: availableSizes.length ? `Available sizes: ${availableSizes.join(", ")}` : "Size guide available",
         note: availableSizes.length
-          ? "Sizing imported from mock data. Edit for detailed fit guidance."
+          ? "Size guide available. Edit for detailed fit guidance."
           : "No size guide provided.",
       };
     } catch {

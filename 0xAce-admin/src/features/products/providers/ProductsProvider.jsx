@@ -1,5 +1,4 @@
-import { createContext, useContext, useMemo, useEffect, useState } from "react";
-import mockSupabaseData from "../../../data/mock/supabaseData";
+import { createContext, useCallback, useContext, useMemo, useEffect, useState } from "react";
 import {
   buildDrops,
   buildProducts,
@@ -8,31 +7,50 @@ import {
   hydrateProduct,
   refreshProductsWithDrops,
 } from "../lib/productsState";
-import supabase from "../../../shared/lib/supabaseClient";
+import supabase, { isSupabaseConfigured } from "../../../shared/lib/supabaseClient";
 
 const ProductsContext = createContext(null);
+
+function formatSupabaseError(error) {
+  if (!error) {
+    return "Unable to load products from Supabase.";
+  }
+
+  if (typeof error.message === "string" && error.message.trim()) {
+    return error.message;
+  }
+
+  return "Unable to load products from Supabase.";
+}
 
 
 function ProductsProvider({ children }) {
   const [drops, setDrops] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
     async function fetchData() {
-      // If supabase is not configured, use mock data
-      if (!supabase || !supabase.from) {
-        const initialDrops = buildDrops(mockSupabaseData);
+      if (isMounted) {
+        setLoading(true);
+        setError("");
+      }
+
+      if (!isSupabaseConfigured || !supabase || !supabase.from) {
         if (isMounted) {
-          setDrops(initialDrops);
-          setProducts(buildProducts(mockSupabaseData, initialDrops));
+          setDrops([]);
+          setProducts([]);
+          setError(
+            "Supabase is not configured. Set REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY to load products."
+          );
           setLoading(false);
         }
         return;
       }
 
-      // Fetch from Supabase
       try {
         const [dropsRes, productsRes, variantsRes, imagesRes] = await Promise.all([
           supabase.from("drops").select("*"),
@@ -47,35 +65,27 @@ function ProductsProvider({ children }) {
           variantsRes.error ||
           imagesRes.error
         ) {
-          // fallback to mock data if any error
-          const initialDrops = buildDrops(mockSupabaseData);
-          if (isMounted) {
-            setDrops(initialDrops);
-            setProducts(buildProducts(mockSupabaseData, initialDrops));
-            setLoading(false);
-          }
-          return;
+          throw dropsRes.error || productsRes.error || variantsRes.error || imagesRes.error;
         }
 
-        // Compose data in the same structure as mockSupabaseData
         const data = {
-          drops: dropsRes.data,
-          products: productsRes.data,
-          product_variants: variantsRes.data,
-          product_images: imagesRes.data,
+          drops: dropsRes.data ?? [],
+          products: productsRes.data ?? [],
+          product_variants: variantsRes.data ?? [],
+          product_images: imagesRes.data ?? [],
         };
         const initialDrops = buildDrops(data);
         if (isMounted) {
           setDrops(initialDrops);
           setProducts(buildProducts(data, initialDrops));
+          setError("");
           setLoading(false);
         }
       } catch (e) {
-        // fallback to mock data on error
-        const initialDrops = buildDrops(mockSupabaseData);
         if (isMounted) {
-          setDrops(initialDrops);
-          setProducts(buildProducts(mockSupabaseData, initialDrops));
+          setDrops([]);
+          setProducts([]);
+          setError(formatSupabaseError(e));
           setLoading(false);
         }
       }
@@ -84,18 +94,20 @@ function ProductsProvider({ children }) {
     return () => {
       isMounted = false;
     };
+  }, [reloadKey]);
+
+  const refresh = useCallback(() => {
+    setReloadKey((currentReloadKey) => currentReloadKey + 1);
   }, []);
 
 
-  // The following create/update/remove methods only update local state.
-  // For full Supabase integration, you would also add DB mutations here.
-  const createProduct = (productDraft) => {
+  const createProduct = useCallback((productDraft) => {
     const nextProduct = hydrateProduct(cloneProduct(productDraft), drops);
     setProducts((currentProducts) => [nextProduct, ...currentProducts]);
     return nextProduct;
-  };
+  }, [drops]);
 
-  const updateProduct = (productId, productDraft) => {
+  const updateProduct = useCallback((productId, productDraft) => {
     const nextProduct = hydrateProduct(cloneProduct(productDraft), drops);
 
     setProducts((currentProducts) =>
@@ -105,21 +117,21 @@ function ProductsProvider({ children }) {
     );
 
     return nextProduct;
-  };
+  }, [drops]);
 
-  const removeProduct = (productId) => {
+  const removeProduct = useCallback((productId) => {
     setProducts((currentProducts) =>
       currentProducts.filter((product) => product.id !== productId)
     );
-  };
+  }, []);
 
-  const createDrop = (dropDraft) => {
+  const createDrop = useCallback((dropDraft) => {
     const nextDrop = cloneDrop(dropDraft);
     setDrops((currentDrops) => [nextDrop, ...currentDrops]);
     return nextDrop;
-  };
+  }, []);
 
-  const updateDrop = (dropId, dropDraft) => {
+  const updateDrop = useCallback((dropId, dropDraft) => {
     const nextDrop = cloneDrop(dropDraft);
 
     setDrops((currentDrops) => {
@@ -133,9 +145,26 @@ function ProductsProvider({ children }) {
     });
 
     return nextDrop;
-  };
+  }, []);
 
-  const removeDrop = (dropId) => {
+  const removeDrop = useCallback(async (dropId) => {
+    if (isSupabaseConfigured) {
+      const { error: unassignError } = await supabase
+        .from("products")
+        .update({ drop_id: null })
+        .eq("drop_id", dropId);
+
+      if (unassignError) {
+        throw unassignError;
+      }
+
+      const { error: deleteError } = await supabase.from("drops").delete().eq("id", dropId);
+
+      if (deleteError) {
+        throw deleteError;
+      }
+    }
+
     setDrops((currentDrops) => {
       const nextDrops = currentDrops.filter((drop) => drop.id !== dropId);
 
@@ -155,7 +184,7 @@ function ProductsProvider({ children }) {
 
       return nextDrops;
     });
-  };
+  }, []);
 
 
   // The create/update/remove functions are stable and do not change between renders
@@ -164,9 +193,11 @@ function ProductsProvider({ children }) {
       products,
       drops,
       loading,
+      error,
       getProductById: (productId) =>
         products.find((product) => product.id === productId) ?? null,
       getDropById: (dropId) => drops.find((drop) => drop.id === dropId) ?? null,
+      refresh,
       createProduct,
       updateProduct,
       removeProduct,
@@ -174,7 +205,19 @@ function ProductsProvider({ children }) {
       updateDrop,
       removeDrop,
     }),
-    [drops, products, loading]
+    [
+      createDrop,
+      createProduct,
+      drops,
+      error,
+      loading,
+      products,
+      refresh,
+      removeDrop,
+      removeProduct,
+      updateDrop,
+      updateProduct,
+    ]
   );
 
   return (
