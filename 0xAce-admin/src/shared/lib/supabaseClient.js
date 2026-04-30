@@ -10,15 +10,24 @@ const dummyClient = {
     insert: async () => ({ data: null, error: new Error("Supabase not configured") }),
     update: async () => ({ data: null, error: new Error("Supabase not configured") }),
     delete: async () => ({ data: null, error: new Error("Supabase not configured") }),
+    eq: () => ({
+      maybeSingle: async () => ({ data: null, error: new Error("Supabase not configured") }),
+    }),
     order: () => ({
       select: async () => ({ data: null, error: new Error("Supabase not configured") }),
     }),
   }),
   auth: {
     signInWithPassword: async () => ({ data: null, error: new Error("Supabase not configured") }),
-    signOut: async () => ({}),
+    signOut: async () => ({ error: null }),
     getSession: async () => ({ data: { session: null } }),
-    onAuthStateChange: () => ({ data: null }),
+    onAuthStateChange: () => ({
+      data: {
+        subscription: {
+          unsubscribe: () => {},
+        },
+      },
+    }),
   },
 };
 

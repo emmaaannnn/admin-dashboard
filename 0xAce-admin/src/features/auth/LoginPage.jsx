@@ -6,10 +6,11 @@ import "./LoginPage.css";
 function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, isHydrated, login } = useAdminSession();
+  const { isAuthenticated, isHydrated, login, authError } = useAdminSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const nextPath = location.state?.from?.pathname || "/products";
 
@@ -21,16 +22,20 @@ function LoginPage() {
     return <Navigate to={nextPath} replace />;
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setError("");
+    setIsSubmitting(true);
 
-    const success = login({ email, password });
+    const result = await login({ email, password });
 
-    if (!success) {
-      setError("Incorrect email or password.");
+    if (!result.success) {
+      setError(result.error || "Incorrect email or password.");
+      setIsSubmitting(false);
       return;
     }
 
+    setIsSubmitting(false);
     navigate(nextPath, { replace: true });
   };
 
@@ -57,6 +62,8 @@ function LoginPage() {
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Email"
                 autoComplete="username"
+                disabled={isSubmitting}
+                required
               />
             </label>
 
@@ -68,13 +75,19 @@ function LoginPage() {
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Password"
                 autoComplete="current-password"
+                disabled={isSubmitting}
+                required
               />
             </label>
 
-            {error ? <p className="form-error">{error}</p> : null}
+            {error || authError ? <p className="form-error">{error || authError}</p> : null}
 
-            <button type="submit" className="primary-button login-form__submit">
-              Sign in
+            <button
+              type="submit"
+              className="primary-button login-form__submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Signing in..." : "Sign in"}
             </button>
           </form>
         </section>
