@@ -42,9 +42,10 @@ function getBasePath(pathname) {
 
 function createNotifications() {
   const now = new Date("2026-04-19T12:00:00.000Z").getTime();
+  const actionableStatuses = new Set(["unfulfilled", "packed", "shipped"]);
 
   const orderNotifications = mockSupabaseData.orders
-    .filter((order) => order.fulfillment_status === "unfulfilled")
+    .filter((order) => actionableStatuses.has(order.fulfillment_status))
     .map((order) => {
       const createdAt = new Date(order.created_at).getTime();
       const hoursAgo = Math.max(1, Math.round((now - createdAt) / (1000 * 60 * 60)));

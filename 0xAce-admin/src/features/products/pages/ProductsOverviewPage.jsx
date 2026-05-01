@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAdminShell } from "../../../app/providers/AdminShellProvider";
-import ProductStats from "../components/ProductStats";
+import FilterStats from "../../../shared/components/FilterStats";
+import ViewModeToggle from "../../../shared/components/ViewModeToggle";
 import ProductTable from "../components/ProductTable";
 import { cloneProduct, getInventoryStatus } from "../lib/productsState";
 import { useProducts } from "../providers/ProductsProvider";
@@ -188,7 +189,7 @@ function ProductsOverviewPage() {
         </div>
       </section>
 
-      <ProductStats
+      <FilterStats
         cards={statCards}
         activeFilter={activeFilter}
         onSelectFilter={setActiveFilter}
@@ -202,25 +203,21 @@ function ProductsOverviewPage() {
           </div>
           <div className="products-overview-section__controls">
             <span className="products-overview-section__meta">{filteredProducts.length} visible</span>
-            <div className="products-view-toggle" aria-label="Product row mode">
-              <button
-                type="button"
-                className={`products-view-toggle__button${viewMode === "full" ? " is-active" : ""}`}
-                onClick={() => setViewMode("full")}
-              >
-                Full Page
-              </button>
-              <button
-                type="button"
-                className={`products-view-toggle__button${viewMode === "quick" ? " is-active" : ""}`}
-                onClick={() => {
+            <ViewModeToggle
+              ariaLabel="Product row mode"
+              options={[
+                { id: "full", label: "Full Page" },
+                { id: "quick", label: "Quick Edit" },
+              ]}
+              activeMode={viewMode}
+              onChange={(nextMode) => {
+                if (nextMode === "quick") {
                   setSelectedProductId(null);
-                  setViewMode("quick");
-                }}
-              >
-                Quick Edit
-              </button>
-            </div>
+                }
+
+                setViewMode(nextMode);
+              }}
+            />
           </div>
         </div>
 

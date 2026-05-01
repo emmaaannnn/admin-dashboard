@@ -77,27 +77,6 @@
   letter-spacing: 0.16em;
 }
 
-.products-view-toggle {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--surface-border);
-}
-
-.products-view-toggle__button {
-  border: none;
-  background: transparent;
-  padding: 0.42rem 0.6rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 0.63rem;
-}
-
-.products-view-toggle__button.is-active {
-  background: rgba(78, 97, 118, 0.08);
-  color: var(--accent-strong);
-}
-
 @media (max-width: 640px) {
   .products-overview-toolbar,
   .products-overview-toolbar__actions,

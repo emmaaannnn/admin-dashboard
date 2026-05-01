@@ -166,6 +166,16 @@
   transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
 }
 
+.product-row__control::-webkit-outer-spin-button,
+.product-row__control::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.product-row__control[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .product-row__control:focus {
   border-color: rgba(78, 97, 118, 0.42);
   box-shadow: 0 0 0 3px rgba(102, 120, 141, 0.12);

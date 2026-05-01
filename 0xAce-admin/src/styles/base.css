@@ -159,6 +159,7 @@ a {
 
 .status-pill--active,
 .status-pill--paid,
+.status-pill--packed,
 .status-pill--shipped,
 .status-pill--in_stock,
 .status-pill--live {
@@ -172,11 +173,13 @@ a {
   background: var(--warning-soft);
 }
 
-.status-pill--sold_out {
+.status-pill--sold_out,
+.status-pill--returned {
   background: var(--danger-soft);
 }
 
-.status-pill--sale {
+.status-pill--sale,
+.status-pill--delivered {
   background: #dcebd4;
   color: #33512f;
 }

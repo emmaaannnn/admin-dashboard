@@ -1,8 +1,8 @@
-import "./styles/ProductStats.css";
+import "./styles/FilterStats.css";
 
-function ProductStats({ cards, activeFilter, onSelectFilter }) {
+function FilterStats({ cards, activeFilter, onSelectFilter }) {
   return (
-    <section className="products-stat-grid" aria-label="Inventory summary">
+    <section className="filter-stats-grid" aria-label="Workspace summary filters">
       {cards.map((card) => (
         <button
           key={card.id}
@@ -19,4 +19,4 @@ function ProductStats({ cards, activeFilter, onSelectFilter }) {
   );
 }
 
-export default ProductStats;
+export default FilterStats;
