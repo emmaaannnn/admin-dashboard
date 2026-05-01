@@ -1,13 +1,29 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getOrderById } from "../lib/ordersState";
+import { cloneOrderDraft } from "../lib/ordersState";
+import { useOrders } from "../providers/OrdersProvider";
 import "./styles/OrderDetailPage.css";
 
 function OrderDetailPage() {
   const navigate = useNavigate();
   const { orderId } = useParams();
+  const { getOrderById, updateOrder } = useOrders();
   const order = getOrderById(orderId);
+  const [draftOrder, setDraftOrder] = useState(() => (order ? cloneOrderDraft(order) : null));
 
-  if (!order) {
+  useEffect(() => {
+    setDraftOrder(order ? cloneOrderDraft(order) : null);
+  }, [order]);
+
+  const hasUnsavedChanges = useMemo(() => {
+    if (!order || !draftOrder) {
+      return false;
+    }
+
+    return JSON.stringify(draftOrder) !== JSON.stringify(cloneOrderDraft(order));
+  }, [draftOrder, order]);
+
+  if (!order || !draftOrder) {
     return (
       <section className="page-header-card">
         <p className="section-kicker">Missing order</p>
@@ -23,6 +39,31 @@ function OrderDetailPage() {
       </section>
     );
   }
+
+  const handleOrderFieldChange = (field, value) => {
+    setDraftOrder((currentOrder) => ({
+      ...currentOrder,
+      [field]: value,
+    }));
+  };
+
+  const handleAddressFieldChange = (field, value) => {
+    setDraftOrder((currentOrder) => ({
+      ...currentOrder,
+      shippingAddress: {
+        ...currentOrder.shippingAddress,
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleDiscardChanges = () => {
+    setDraftOrder(cloneOrderDraft(order));
+  };
+
+  const handleSaveChanges = () => {
+    updateOrder(orderId, draftOrder);
+  };
 
   return (
     <div className="page-stack order-workspace">
@@ -40,9 +81,16 @@ function OrderDetailPage() {
 
         <div className="order-workspace__actions">
           <span className={`status-pill status-pill--${order.fulfillment_status}`}>{order.statusLabel}</span>
-          <Link to="/orders" className="secondary-button">
-            Orders board
-          </Link>
+          {hasUnsavedChanges ? (
+            <>
+              <button type="button" className="utility-button" onClick={handleDiscardChanges}>
+                Discard
+              </button>
+              <button type="button" className="primary-button" onClick={handleSaveChanges}>
+                Save Order
+              </button>
+            </>
+          ) : null}
         </div>
       </section>
 
@@ -57,18 +105,52 @@ function OrderDetailPage() {
           </div>
 
           <div className="data-grid data-grid--three">
-            <div>
+            <label className="field-stack">
               <span>Subtotal</span>
-              <strong>{order.subtotalFormatted}</strong>
-            </div>
-            <div>
+              <input
+                className="editor-input"
+                type="number"
+                min="0"
+                step="0.01"
+                value={draftOrder.subtotal_aud}
+                onChange={(event) => handleOrderFieldChange("subtotal_aud", event.target.value)}
+              />
+            </label>
+            <label className="field-stack">
               <span>Shipping</span>
-              <strong>{order.shippingFormatted}</strong>
-            </div>
-            <div>
-              <span>Payment</span>
-              <strong>{order.payment_status}</strong>
-            </div>
+              <input
+                className="editor-input"
+                type="number"
+                min="0"
+                step="0.01"
+                value={draftOrder.shipping_aud}
+                onChange={(event) => handleOrderFieldChange("shipping_aud", event.target.value)}
+              />
+            </label>
+            <label className="field-stack">
+              <span>Total</span>
+              <input
+                className="editor-input"
+                type="number"
+                min="0"
+                step="0.01"
+                value={draftOrder.total_aud}
+                onChange={(event) => handleOrderFieldChange("total_aud", event.target.value)}
+              />
+            </label>
+            <label className="field-stack field-stack--wide">
+              <span>Payment status</span>
+              <select
+                className="editor-select"
+                value={draftOrder.payment_status}
+                onChange={(event) => handleOrderFieldChange("payment_status", event.target.value)}
+              >
+                <option value="paid">Paid</option>
+                <option value="pending">Pending</option>
+                <option value="failed">Failed</option>
+                <option value="refunded">Refunded</option>
+              </select>
+            </label>
           </div>
         </article>
 
@@ -80,19 +162,72 @@ function OrderDetailPage() {
             </div>
           </div>
 
-          <div className="order-workspace__stack">
-            <div>
+          <div className="order-workspace__form-grid">
+            <label className="field-stack">
               <span>Name</span>
-              <strong>{order.shipping_name}</strong>
-            </div>
-            <div>
+              <input
+                className="editor-input"
+                value={draftOrder.shipping_name}
+                onChange={(event) => handleOrderFieldChange("shipping_name", event.target.value)}
+              />
+            </label>
+            <label className="field-stack">
               <span>Email</span>
-              <strong>{order.customer_email}</strong>
-            </div>
-            <div>
-              <span>Address</span>
-              <strong>{order.shippingAddressFull}</strong>
-            </div>
+              <input
+                className="editor-input"
+                type="email"
+                value={draftOrder.customer_email}
+                onChange={(event) => handleOrderFieldChange("customer_email", event.target.value)}
+              />
+            </label>
+            <label className="field-stack field-stack--wide">
+              <span>Address line 1</span>
+              <input
+                className="editor-input"
+                value={draftOrder.shippingAddress.line1}
+                onChange={(event) => handleAddressFieldChange("line1", event.target.value)}
+              />
+            </label>
+            <label className="field-stack field-stack--wide">
+              <span>Address line 2</span>
+              <input
+                className="editor-input"
+                value={draftOrder.shippingAddress.line2}
+                onChange={(event) => handleAddressFieldChange("line2", event.target.value)}
+              />
+            </label>
+            <label className="field-stack">
+              <span>City</span>
+              <input
+                className="editor-input"
+                value={draftOrder.shippingAddress.city}
+                onChange={(event) => handleAddressFieldChange("city", event.target.value)}
+              />
+            </label>
+            <label className="field-stack">
+              <span>State</span>
+              <input
+                className="editor-input"
+                value={draftOrder.shippingAddress.state}
+                onChange={(event) => handleAddressFieldChange("state", event.target.value)}
+              />
+            </label>
+            <label className="field-stack">
+              <span>Postcode</span>
+              <input
+                className="editor-input"
+                value={draftOrder.shippingAddress.postal_code}
+                onChange={(event) => handleAddressFieldChange("postal_code", event.target.value)}
+              />
+            </label>
+            <label className="field-stack">
+              <span>Country</span>
+              <input
+                className="editor-input"
+                value={draftOrder.shippingAddress.country}
+                onChange={(event) => handleAddressFieldChange("country", event.target.value)}
+              />
+            </label>
           </div>
         </article>
 
@@ -129,31 +264,53 @@ function OrderDetailPage() {
             </div>
           </div>
 
-          <div className="order-workspace__stack">
-            <div>
+          <div className="order-workspace__form-grid">
+            <label className="field-stack">
               <span>Status</span>
-              <strong>{order.statusLabel}</strong>
-            </div>
-            <div>
+              <select
+                className="editor-select"
+                value={draftOrder.fulfillment_status}
+                onChange={(event) => handleOrderFieldChange("fulfillment_status", event.target.value)}
+              >
+                <option value="unfulfilled">Unfulfilled</option>
+                <option value="packed">Packed</option>
+                <option value="shipped">Shipped</option>
+                <option value="delivered">Delivered</option>
+                <option value="returned">Returned</option>
+              </select>
+            </label>
+            <label className="field-stack">
+              <span>Tracking number</span>
+              <input
+                className="editor-input"
+                value={draftOrder.tracking_number}
+                onChange={(event) => handleOrderFieldChange("tracking_number", event.target.value)}
+              />
+            </label>
+            <label className="field-stack field-stack--wide">
+              <span>Tracking URL</span>
+              <input
+                className="editor-input"
+                value={draftOrder.tracking_url}
+                onChange={(event) => handleOrderFieldChange("tracking_url", event.target.value)}
+              />
+            </label>
+            <label className="field-stack">
               <span>Receipt sent</span>
-              <strong>{order.receiptSentAtFormatted}</strong>
-            </div>
-            <div>
-              <span>Shipped</span>
-              <strong>{order.shippedAtFormatted}</strong>
-            </div>
-            <div>
-              <span>Tracking</span>
-              <strong>{order.tracking_number ?? "Awaiting label"}</strong>
-            </div>
-            {order.tracking_url ? (
-              <div>
-                <span>Tracking link</span>
-                <a className="order-workspace__tracking-link" href={order.tracking_url} target="_blank" rel="noreferrer">
-                  Open carrier page
-                </a>
-              </div>
-            ) : null}
+              <input
+                className="editor-input"
+                value={draftOrder.receipt_sent_at}
+                onChange={(event) => handleOrderFieldChange("receipt_sent_at", event.target.value)}
+              />
+            </label>
+            <label className="field-stack">
+              <span>Shipped at</span>
+              <input
+                className="editor-input"
+                value={draftOrder.shipped_at}
+                onChange={(event) => handleOrderFieldChange("shipped_at", event.target.value)}
+              />
+            </label>
           </div>
         </article>
       </section>

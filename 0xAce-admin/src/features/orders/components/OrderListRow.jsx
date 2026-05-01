@@ -71,13 +71,6 @@ function OrderListRow({ order, viewMode, isPriority, isSelected, onSelectOrder }
               <Link to={`/orders/${order.id}`} className="utility-button order-row__action-button">
                 Full page
               </Link>
-              <button
-                type="button"
-                className="utility-button order-row__action-button"
-                onClick={() => onSelectOrder(null)}
-              >
-                Collapse
-              </button>
             </div>
           </div>
 

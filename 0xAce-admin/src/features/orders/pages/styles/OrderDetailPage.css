@@ -59,6 +59,12 @@
   gap: 0.7rem;
 }
 
+.order-workspace__form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
 .order-workspace__stack div,
 .order-workspace__item-row {
   padding: 0.75rem;
@@ -80,6 +86,23 @@
   color: var(--accent-strong);
 }
 
+.order-workspace .field-stack span {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.66rem;
+}
+
+.order-workspace .editor-input[type="number"]::-webkit-outer-spin-button,
+.order-workspace .editor-input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.order-workspace .editor-input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 @media (max-width: 900px) {
   .order-workspace__grid {
     grid-template-columns: 1fr;
@@ -87,6 +110,10 @@
 
   .order-workspace__card--wide {
     grid-column: auto;
+  }
+
+  .order-workspace__form-grid {
+    grid-template-columns: 1fr;
   }
 }
 

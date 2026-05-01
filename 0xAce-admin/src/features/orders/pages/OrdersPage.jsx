@@ -4,16 +4,16 @@ import FilterStats from "../../../shared/components/FilterStats";
 import ViewModeToggle from "../../../shared/components/ViewModeToggle";
 import {
   ORDER_STATUSES,
-  getOrders,
   getStatusLabel,
   matchesOrderSearch,
 } from "../lib/ordersState";
 import OrderList from "../components/OrderList";
+import { useOrders } from "../providers/OrdersProvider";
 import "./styles/OrdersPage.css";
 
 function OrdersPage() {
   const { searchQuery } = useAdminShell();
-  const orders = useMemo(() => getOrders(), []);
+  const { orders } = useOrders();
   const [activeFilter, setActiveFilter] = useState("all");
   const [viewMode, setViewMode] = useState("full");
   const [selectedOrderId, setSelectedOrderId] = useState(null);
@@ -47,7 +47,7 @@ function OrdersPage() {
     }
   }, [filteredOrders, selectedOrderId, viewMode]);
 
-  const orderedVisibleOrders = [...filteredOrders].sort((left, right) => {
+  const orderedVisibleOrders = useMemo(() => [...filteredOrders].sort((left, right) => {
     const leftIndex = ORDER_STATUSES.indexOf(left.fulfillment_status);
     const rightIndex = ORDER_STATUSES.indexOf(right.fulfillment_status);
 
@@ -56,7 +56,7 @@ function OrdersPage() {
     }
 
     return new Date(right.created_at) - new Date(left.created_at);
-  });
+  }), [filteredOrders]);
   const statCards = [
     {
       id: "all",
