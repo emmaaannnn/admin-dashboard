@@ -127,8 +127,8 @@ function ProductDetailPage() {
     setDraftProduct(cloneProduct(sourceProduct));
   };
 
-  const handleSaveChanges = () => {
-    const nextProduct = updateProduct(productId, draftProduct);
+  const handleSaveChanges = async () => {
+    const nextProduct = await updateProduct(productId, draftProduct);
     setDraftProduct(cloneProduct(nextProduct));
   };
 

@@ -67,8 +67,8 @@ function OrderDetailPage() {
     setIsAmendingCustomer(false);
   };
 
-  const handleSaveChanges = () => {
-    updateOrder(orderId, draftOrder);
+  const handleSaveChanges = async () => {
+    await updateOrder(orderId, draftOrder);
     setIsAmendingCustomer(false);
   };
 

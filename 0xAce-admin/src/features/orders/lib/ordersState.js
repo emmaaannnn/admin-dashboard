@@ -1,4 +1,3 @@
-import mockSupabaseData from "../../../data/mock/supabaseData";
 import { formatDate, formatMoney } from "../../../shared/lib/formatters";
 
 export const ORDER_STATUSES = [
@@ -52,8 +51,8 @@ function buildFullAddress(address) {
     .join(", ");
 }
 
-function groupItemsByOrder() {
-  return mockSupabaseData.order_items.reduce((itemsByOrderId, item) => {
+function groupItemsByOrder(sourceOrderItems = []) {
+  return sourceOrderItems.reduce((itemsByOrderId, item) => {
     const items = itemsByOrderId.get(item.order_id) ?? [];
 
     items.push({
@@ -119,8 +118,8 @@ export function buildOrder(order, itemsByOrderId = groupItemsByOrder()) {
   };
 }
 
-export function buildOrders(sourceOrders = mockSupabaseData.orders) {
-  const itemsByOrderId = groupItemsByOrder();
+export function buildOrders(sourceOrders = [], sourceOrderItems = []) {
+  const itemsByOrderId = groupItemsByOrder(sourceOrderItems);
 
   return [...sourceOrders]
     .sort((left, right) => new Date(right.created_at) - new Date(left.created_at))
@@ -128,7 +127,7 @@ export function buildOrders(sourceOrders = mockSupabaseData.orders) {
 }
 
 export function getOrders() {
-  return buildOrders(mockSupabaseData.orders);
+  return buildOrders();
 }
 
 export function getOrderById(orderId) {

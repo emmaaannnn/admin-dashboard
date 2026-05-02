@@ -23,6 +23,39 @@ function formatSupabaseError(error) {
   return "Unable to load products from Supabase.";
 }
 
+function serializeProductRecord(product) {
+  return {
+    id: product.id,
+    drop_id: product.drop_id || null,
+    slug: product.slug,
+    name: product.name,
+    subtitle: product.subtitle?.trim() || null,
+    description: product.description?.trim() || null,
+    category: product.category?.trim() || null,
+    product_type: product.product_type?.trim() || null,
+    status: product.status,
+    size_guide: product.size_guide ?? null,
+  };
+}
+
+function serializeVariantRecord(variant) {
+  return {
+    id: variant.id,
+    product_id: variant.product_id,
+    sku: variant.sku,
+    color: variant.color?.trim() || null,
+    size: variant.size?.trim() || null,
+    price_aud: Math.max(0, Number(variant.price_aud) || 0),
+    compare_at_price_aud:
+      variant.compare_at_price_aud === null || variant.compare_at_price_aud === ""
+        ? null
+        : Math.max(0, Number(variant.compare_at_price_aud) || 0),
+    inventory_quantity: Math.max(0, Number(variant.inventory_quantity) || 0),
+    inventory_status: variant.inventory_status,
+    active: variant.active ?? true,
+  };
+}
+
 
 function ProductsProvider({ children }) {
   const [drops, setDrops] = useState([]);
@@ -107,7 +140,8 @@ function ProductsProvider({ children }) {
     return nextProduct;
   }, [drops]);
 
-  const updateProduct = useCallback((productId, productDraft) => {
+  const updateProduct = useCallback(async (productId, productDraft) => {
+    const sourceProduct = products.find((product) => product.id === productId) ?? null;
     const nextProduct = hydrateProduct(cloneProduct(productDraft), drops);
 
     setProducts((currentProducts) =>
@@ -116,8 +150,66 @@ function ProductsProvider({ children }) {
       )
     );
 
+    if (isSupabaseConfigured && supabase && supabase.from) {
+      try {
+        const removedVariantIds = sourceProduct
+          ? sourceProduct.variants
+              .filter(
+                (sourceVariant) =>
+                  !nextProduct.variants.some((draftVariant) => draftVariant.id === sourceVariant.id)
+              )
+              .map((variant) => variant.id)
+          : [];
+
+        const { error: productError } = await supabase
+          .from("products")
+          .update(serializeProductRecord(nextProduct))
+          .eq("id", productId);
+
+        if (productError) {
+          throw productError;
+        }
+
+        if (removedVariantIds.length) {
+          const { error: deleteVariantsError } = await supabase
+            .from("product_variants")
+            .delete()
+            .in("id", removedVariantIds);
+
+          if (deleteVariantsError) {
+            throw deleteVariantsError;
+          }
+        }
+
+        if (nextProduct.variants.length) {
+          const { error: variantsError } = await supabase
+            .from("product_variants")
+            .upsert(nextProduct.variants.map((variant) => serializeVariantRecord(variant)), {
+              onConflict: "id",
+            });
+
+          if (variantsError) {
+            throw variantsError;
+          }
+        }
+
+        setError("");
+      } catch (persistError) {
+        if (sourceProduct) {
+          setProducts((currentProducts) =>
+            currentProducts.map((product) =>
+              product.id === productId ? sourceProduct : product
+            )
+          );
+        }
+
+        setError(formatSupabaseError(persistError));
+        throw persistError;
+      }
+    }
+
     return nextProduct;
-  }, [drops]);
+  }, [drops, products]);
 
   const removeProduct = useCallback((productId) => {
     setProducts((currentProducts) =>

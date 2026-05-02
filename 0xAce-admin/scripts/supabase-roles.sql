@@ -36,19 +36,6 @@ BEFORE UPDATE ON public.admin_users
 FOR EACH ROW
 EXECUTE FUNCTION public.set_admin_users_updated_at();
 
-CREATE OR REPLACE FUNCTION public.is_admin_user()
-RETURNS boolean
-LANGUAGE sql
-STABLE
-AS $$
-  SELECT EXISTS (
-    SELECT 1
-    FROM public.admin_users
-    WHERE user_id = auth.uid()
-      AND is_active = true
-  );
-$$;
-
 -- Remove old policies so the script can be re-run safely.
 DROP POLICY IF EXISTS "Admin users can read their own profile" ON public.admin_users;
 DROP POLICY IF EXISTS "Public read products" ON public.products;
@@ -84,33 +71,117 @@ CREATE POLICY "Public read product_images" ON public.product_images
 
 CREATE POLICY "Admin full access products" ON public.products
   FOR ALL TO authenticated
-  USING (public.is_admin_user())
-  WITH CHECK (public.is_admin_user());
+  USING (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  );
 
 CREATE POLICY "Admin full access drops" ON public.drops
   FOR ALL TO authenticated
-  USING (public.is_admin_user())
-  WITH CHECK (public.is_admin_user());
+  USING (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  );
 
 CREATE POLICY "Admin full access product_variants" ON public.product_variants
   FOR ALL TO authenticated
-  USING (public.is_admin_user())
-  WITH CHECK (public.is_admin_user());
+  USING (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  );
 
 CREATE POLICY "Admin full access product_images" ON public.product_images
   FOR ALL TO authenticated
-  USING (public.is_admin_user())
-  WITH CHECK (public.is_admin_user());
+  USING (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  );
 
 CREATE POLICY "Admin full access orders" ON public.orders
   FOR ALL TO authenticated
-  USING (public.is_admin_user())
-  WITH CHECK (public.is_admin_user());
+  USING (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  );
 
 CREATE POLICY "Admin full access order_items" ON public.order_items
   FOR ALL TO authenticated
-  USING (public.is_admin_user())
-  WITH CHECK (public.is_admin_user());
+  USING (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1
+      FROM public.admin_users
+      WHERE user_id = auth.uid()
+        AND is_active = true
+    )
+  );
 
 -- Example: after creating a user in Supabase Auth, register them here.
 -- Replace the email and values below with your real admin user.

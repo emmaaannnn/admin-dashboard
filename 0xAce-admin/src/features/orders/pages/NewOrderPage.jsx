@@ -40,8 +40,8 @@ function NewOrderPage() {
     }));
   };
 
-  const handleCreateOrder = () => {
-    const nextOrder = createOrder(draftOrder);
+  const handleCreateOrder = async () => {
+    const nextOrder = await createOrder(draftOrder);
     navigate(`/orders/${nextOrder.id}`);
   };
 

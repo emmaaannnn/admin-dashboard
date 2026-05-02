@@ -53,7 +53,7 @@ function normalizeSizeGuide(sizeGuide) {
 
 export function getInventoryStatus(quantity) {
   if (quantity <= 0) {
-    return "sold_out";
+    return "out_of_stock";
   }
 
   if (quantity <= LOW_STOCK_THRESHOLD) {
@@ -178,7 +178,7 @@ export function createEmptyProduct(drops, productCount) {
           price_aud: 0,
           compare_at_price_aud: null,
           inventory_quantity: 0,
-          inventory_status: "sold_out",
+          inventory_status: "out_of_stock",
         },
       ],
     },
@@ -198,7 +198,7 @@ export function createEmptyVariant(productId, variantCount = 0) {
     price_aud: 0,
     compare_at_price_aud: null,
     inventory_quantity: 0,
-    inventory_status: "sold_out",
+    inventory_status: "out_of_stock",
   };
 }
 
