@@ -95,7 +95,12 @@ function OrdersPage() {
         </div>
       </section>
 
-      <FilterStats cards={statCards} activeFilter={activeFilter} onSelectFilter={setActiveFilter} />
+      <FilterStats
+        cards={statCards}
+        activeFilter={activeFilter}
+        onSelectFilter={setActiveFilter}
+        filterLabel="Status filter"
+      />
 
       <section className="data-card orders-overview-section">
         <div className="data-card__header orders-overview-section__header">

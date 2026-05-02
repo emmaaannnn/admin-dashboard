@@ -72,6 +72,10 @@ function AdminHeader() {
 
   return (
     <header className="admin-header">
+      <div className="admin-header__brand" aria-label="0xACE admin home">
+        <img src="/0xACElogo.png" alt="0xAce" className="admin-header__brand-logo" />
+      </div>
+
       <label className="search-shell admin-header__search" aria-label="Search workspace">
         <span className="search-shell__icon">
           <SearchIcon />

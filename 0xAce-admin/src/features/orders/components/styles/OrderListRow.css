@@ -116,6 +116,7 @@
 .order-row__action-button {
   min-height: 2.75rem;
   padding-inline: 1rem;
+  border-radius: 999px;
 }
 
 @media (max-width: 980px) {
@@ -141,7 +142,14 @@
     align-items: stretch;
   }
 
+  .order-row__expanded-actions {
+    gap: 0.6rem;
+  }
+
   .order-row__action-button {
     width: 100%;
+    min-height: 3rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
   }
 }

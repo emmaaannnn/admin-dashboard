@@ -207,6 +207,7 @@ function ProductsOverviewPage() {
         cards={statCards}
         activeFilter={activeFilter}
         onSelectFilter={setActiveFilter}
+        filterLabel="Inventory filter"
       />
 
       <section className="data-card products-overview-section">

@@ -1,5 +1,6 @@
 .admin-shell {
   min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   grid-template-columns: 224px minmax(0, 1fr);
   align-items: start;
@@ -27,10 +28,18 @@
   .admin-shell {
     grid-template-columns: 1fr;
   }
+
+  .admin-content {
+    min-height: 100dvh;
+  }
+
+  .admin-workspace {
+    padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 @media (max-width: 640px) {
   .admin-workspace {
-    padding: 1rem;
+    padding: 0.9rem 1rem calc(8.1rem + env(safe-area-inset-bottom, 0px));
   }
 }
