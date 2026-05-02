@@ -1,0 +1,5 @@
+.order-fulfillment-card .detail-panel__header strong {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+}

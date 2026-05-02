@@ -9,6 +9,7 @@ import EditDropsPage from "../features/products/pages/EditDropsPage";
 import OrdersLayout from "../features/orders/pages/OrdersLayout";
 import OrdersPage from "../features/orders/pages/OrdersPage";
 import OrderDetailPage from "../features/orders/pages/OrderDetailPage";
+import NewOrderPage from "../features/orders/pages/NewOrderPage";
 import WebsiteSettingsPage from "../features/website/WebsiteSettingsPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
             element: <OrdersLayout />,
             children: [
               { index: true, element: <OrdersPage /> },
+              { path: "new", element: <NewOrderPage /> },
               { path: ":orderId", element: <OrderDetailPage /> },
             ],
           },

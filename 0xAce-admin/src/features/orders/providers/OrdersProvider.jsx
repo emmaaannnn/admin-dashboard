@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, useState } from "react";
 import mockSupabaseData from "../../../data/mock/supabaseData";
-import { buildOrders, serializeOrderDraft } from "../lib/ordersState";
+import { buildOrders, createEmptyOrderDraft, serializeOrderDraft } from "../lib/ordersState";
 
 const OrdersContext = createContext(null);
 
@@ -13,6 +13,14 @@ function OrdersProvider({ children }) {
     () => ({
       orders,
       getOrderById: (orderId) => orders.find((order) => order.id === orderId) ?? null,
+      createOrderDraft: () => createEmptyOrderDraft(rawOrders.length),
+      createOrder: (orderDraft) => {
+        const nextOrder = serializeOrderDraft(orderDraft);
+
+        setRawOrders((currentOrders) => [nextOrder, ...currentOrders]);
+
+        return nextOrder;
+      },
       updateOrder: (orderId, orderDraft) => {
         const nextOrder = serializeOrderDraft(orderDraft);
 
@@ -23,7 +31,7 @@ function OrdersProvider({ children }) {
         return nextOrder;
       },
     }),
-    [orders]
+    [orders, rawOrders.length]
   );
 
   return <OrdersContext.Provider value={value}>{children}</OrdersContext.Provider>;

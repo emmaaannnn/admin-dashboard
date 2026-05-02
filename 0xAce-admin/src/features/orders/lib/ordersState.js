@@ -76,6 +76,14 @@ function normalizeMoneyInput(value) {
   return parsedValue.toFixed(2);
 }
 
+function createOrderId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  return `manual-order-${Date.now()}`;
+}
+
 export function getStatusLabel(status) {
   return STATUS_LABELS[status] ?? status;
 }
@@ -154,6 +162,39 @@ export function cloneOrderDraft(order) {
     receipt_sent_at: order.receipt_sent_at ?? "",
     shipped_at: order.shipped_at ?? "",
     created_at: order.created_at,
+  };
+}
+
+export function createEmptyOrderDraft(orderCount = 0) {
+  const nextIndex = orderCount + 1;
+  const createdAt = new Date().toISOString();
+
+  return {
+    id: createOrderId(),
+    idx: nextIndex,
+    stripe_checkout_session_id: `manual-session-${nextIndex}`,
+    stripe_payment_intent_id: `manual-intent-${nextIndex}`,
+    customer_email: "",
+    shipping_name: "Manual order",
+    shippingAddress: {
+      line1: "",
+      line2: "",
+      city: "",
+      state: "",
+      postal_code: "",
+      country: "AU",
+    },
+    subtotal_aud: "0.00",
+    shipping_aud: "0.00",
+    total_aud: "0.00",
+    currency: "AUD",
+    payment_status: "paid",
+    fulfillment_status: "unfulfilled",
+    tracking_number: "",
+    tracking_url: "",
+    receipt_sent_at: "",
+    shipped_at: "",
+    created_at: createdAt,
   };
 }
 

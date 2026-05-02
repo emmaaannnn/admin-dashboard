@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAdminShell } from "../../../app/providers/AdminShellProvider";
 import FilterStats from "../../../shared/components/FilterStats";
 import ViewModeToggle from "../../../shared/components/ViewModeToggle";
@@ -88,6 +89,9 @@ function OrdersPage() {
 
         <div className="orders-overview-toolbar__actions">
           <span className="orders-overview-toolbar__summary">{orders.length} total orders</span>
+          <Link to="/orders/new" className="primary-button products-button--compact">
+            New Order
+          </Link>
         </div>
       </section>
 

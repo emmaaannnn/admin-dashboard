@@ -1,0 +1,4 @@
+.order-workspace__items {
+  display: grid;
+  gap: 0.7rem;
+}
