@@ -21,6 +21,10 @@ function parseAddress(addressJson) {
     return null;
   }
 
+  if (typeof addressJson === "object") {
+    return addressJson;
+  }
+
   try {
     return JSON.parse(addressJson);
   } catch {

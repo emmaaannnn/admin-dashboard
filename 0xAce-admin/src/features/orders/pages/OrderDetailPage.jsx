@@ -10,7 +10,7 @@ import "./styles/OrderDetailPage.css";
 function OrderDetailPage() {
   const navigate = useNavigate();
   const { orderId } = useParams();
-  const { getOrderById, updateOrder } = useOrders();
+  const { getOrderById, updateOrder, removeOrder } = useOrders();
   const order = getOrderById(orderId);
   const [draftOrder, setDraftOrder] = useState(() => (order ? cloneOrderDraft(order) : null));
   const [isAmendingCustomer, setIsAmendingCustomer] = useState(false);
@@ -72,6 +72,19 @@ function OrderDetailPage() {
     setIsAmendingCustomer(false);
   };
 
+  const handleRemoveOrder = async () => {
+    const confirmed = window.confirm(
+      `Delete order #${order.shortId}? This will also remove its line items.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    await removeOrder(orderId);
+    navigate("/orders");
+  };
+
   return (
     <div className="page-stack order-workspace">
       <section className="order-workspace__toolbar order-workspace__toolbar--leading-back">
@@ -81,13 +94,18 @@ function OrderDetailPage() {
           </button>
           <div>
             <p className="section-kicker">Order page</p>
-            <h2 className="order-workspace__title">#{order.shortId}</h2>
+            <div className="order-workspace__title-row">
+              <h2 className="order-workspace__title">#{order.shortId}</h2>
+              <span className={`status-pill status-pill--${order.fulfillment_status}`}>{order.statusLabel}</span>
+            </div>
             <p className="order-workspace__copy">{order.shipping_name} · {order.createdAtFormatted}</p>
           </div>
         </div>
 
         <div className="order-workspace__actions">
-          <span className={`status-pill status-pill--${order.fulfillment_status}`}>{order.statusLabel}</span>
+          <button type="button" className="utility-button utility-button--danger" onClick={handleRemoveOrder}>
+            Delete Order
+          </button>
           {hasUnsavedChanges ? (
             <>
               <button type="button" className="utility-button" onClick={handleDiscardChanges}>

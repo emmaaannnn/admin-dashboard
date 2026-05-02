@@ -146,6 +146,31 @@ function OrdersProvider({ children }) {
     return nextOrder;
   }, []);
 
+  const removeOrder = useCallback(async (orderId) => {
+    if (isSupabaseConfigured && supabase && supabase.from) {
+      const { error: deleteOrderItemsError } = await supabase
+        .from("order_items")
+        .delete()
+        .eq("order_id", orderId);
+
+      if (deleteOrderItemsError) {
+        throw deleteOrderItemsError;
+      }
+
+      const { error: deleteOrderError } = await supabase
+        .from("orders")
+        .delete()
+        .eq("id", orderId);
+
+      if (deleteOrderError) {
+        throw deleteOrderError;
+      }
+    }
+
+    setRawOrders((currentOrders) => currentOrders.filter((order) => order.id !== orderId));
+    setRawOrderItems((currentItems) => currentItems.filter((item) => item.order_id !== orderId));
+  }, []);
+
   const value = useMemo(
     () => ({
       orders,
@@ -156,8 +181,9 @@ function OrdersProvider({ children }) {
       createOrderDraft: createOrderDraftFactory,
       createOrder,
       updateOrder,
+      removeOrder,
     }),
-    [createOrder, createOrderDraftFactory, error, loading, orders, refresh, updateOrder]
+    [createOrder, createOrderDraftFactory, error, loading, orders, refresh, removeOrder, updateOrder]
   );
 
   return <OrdersContext.Provider value={value}>{children}</OrdersContext.Provider>;

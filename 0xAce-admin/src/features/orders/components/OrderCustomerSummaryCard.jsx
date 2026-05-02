@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./styles/OrderCustomerSummaryCard.css";
 
 function OrderCustomerSummaryCard({
@@ -8,16 +9,47 @@ function OrderCustomerSummaryCard({
   onOrderFieldChange,
   onAddressFieldChange,
 }) {
+  const [showStripeInfo, setShowStripeInfo] = useState(false);
+  const [copiedField, setCopiedField] = useState("");
+  const stripeCheckoutId = order.stripe_checkout_session_id ?? "No checkout session";
+  const stripePaymentIntentId = order.stripe_payment_intent_id ?? "No payment intent";
+
+  const handleCopy = async (field, value) => {
+    if (!value || value.startsWith("No ")) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedField(field);
+      window.setTimeout(() => {
+        setCopiedField((currentField) => (currentField === field ? "" : currentField));
+      }, 1800);
+    } catch {
+      setCopiedField("");
+    }
+  };
+
   return (
-    <article className="editor-card order-workspace__card order-customer-summary-card">
+    <article className="editor-card order-workspace__card order-workspace__card--wide order-customer-summary-card">
       <div className="detail-panel__header order-customer-summary-card__header">
         <div>
           <p className="data-card__eyebrow">Customer and summary</p>
           <h3>Customer record</h3>
         </div>
-        <button type="button" className="utility-button" onClick={onToggleAmend}>
-          {isAmending ? "Lock" : "Amend"}
-        </button>
+        <div className="order-customer-summary-card__actions">
+          <button
+            type="button"
+            className="utility-button"
+            onClick={() => setShowStripeInfo((currentValue) => !currentValue)}
+            aria-expanded={showStripeInfo}
+          >
+            {showStripeInfo ? "Hide Stripe Info" : "Stripe Info"}
+          </button>
+          <button type="button" className="utility-button" onClick={onToggleAmend}>
+            {isAmending ? "Lock" : "Amend"}
+          </button>
+        </div>
       </div>
 
       {isAmending ? (
@@ -106,6 +138,38 @@ function OrderCustomerSummaryCard({
           </div>
         </div>
       )}
+
+      {showStripeInfo ? (
+        <div className="order-customer-summary-card__grid order-customer-summary-card__grid--meta">
+          <div className="order-customer-summary-card__block order-customer-summary-card__block--code">
+            <div className="order-customer-summary-card__block-head">
+              <span>Stripe checkout session</span>
+              <button
+                type="button"
+                className="utility-button order-customer-summary-card__copy-button"
+                onClick={() => handleCopy("checkout", order.stripe_checkout_session_id ?? "")}
+              >
+                {copiedField === "checkout" ? "Copied" : "Copy"}
+              </button>
+            </div>
+            <strong>{stripeCheckoutId}</strong>
+          </div>
+
+          <div className="order-customer-summary-card__block order-customer-summary-card__block--code">
+            <div className="order-customer-summary-card__block-head">
+              <span>Stripe payment intent</span>
+              <button
+                type="button"
+                className="utility-button order-customer-summary-card__copy-button"
+                onClick={() => handleCopy("payment-intent", order.stripe_payment_intent_id ?? "")}
+              >
+                {copiedField === "payment-intent" ? "Copied" : "Copy"}
+              </button>
+            </div>
+            <strong>{stripePaymentIntentId}</strong>
+          </div>
+        </div>
+      ) : null}
     </article>
   );
 }

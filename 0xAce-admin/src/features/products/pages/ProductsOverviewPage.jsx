@@ -30,14 +30,28 @@ function ProductsOverviewPage() {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
-  const filteredProducts = products.filter((product) => {
-    const matchesQuery = normalizedQuery ? matchesSearch(product, normalizedQuery) : true;
-    const matchesFilter =
-      activeFilter === "all" ? true : product.inventoryState === activeFilter;
-    const matchesDrop = selectedDropId === "all" ? true : product.drop_id === selectedDropId;
+  const filteredProducts = products
+    .filter((product) => {
+      const matchesQuery = normalizedQuery ? matchesSearch(product, normalizedQuery) : true;
+      const matchesFilter =
+        activeFilter === "all" ? true : product.inventoryState === activeFilter;
+      const matchesDrop = selectedDropId === "all" ? true : product.drop_id === selectedDropId;
 
-    return matchesQuery && matchesFilter && matchesDrop;
-  });
+      return matchesQuery && matchesFilter && matchesDrop;
+    })
+    .sort((leftProduct, rightProduct) => {
+      const nameComparison = leftProduct.name.localeCompare(rightProduct.name, undefined, {
+        sensitivity: "base",
+      });
+
+      if (nameComparison !== 0) {
+        return nameComparison;
+      }
+
+      return leftProduct.slug.localeCompare(rightProduct.slug, undefined, {
+        sensitivity: "base",
+      });
+    });
 
   useEffect(() => {
     if (!filteredProducts.length) {

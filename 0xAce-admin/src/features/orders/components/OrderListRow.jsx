@@ -2,8 +2,20 @@ import { Link, useNavigate } from "react-router-dom";
 import OrderQuickView from "./OrderQuickView";
 import "./styles/OrderListRow.css";
 
-function OrderListRow({ order, viewMode, isPriority, isSelected, onSelectOrder }) {
+function OrderListRow({ order, viewMode, isPriority, isSelected, onSelectOrder, onRemoveOrder }) {
   const navigate = useNavigate();
+
+  const handleRemoveOrder = async () => {
+    const confirmed = window.confirm(
+      `Delete order #${order.shortId}? This will also remove its line items.`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    await onRemoveOrder(order.id);
+  };
 
   return (
     <article className={`order-row${isPriority ? " order-row--priority" : ""}`}>
@@ -71,6 +83,13 @@ function OrderListRow({ order, viewMode, isPriority, isSelected, onSelectOrder }
               <Link to={`/orders/${order.id}`} className="utility-button order-row__action-button">
                 Full page
               </Link>
+              <button
+                type="button"
+                className="utility-button utility-button--danger order-row__action-button"
+                onClick={handleRemoveOrder}
+              >
+                Delete
+              </button>
             </div>
           </div>
 

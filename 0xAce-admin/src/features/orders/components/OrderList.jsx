@@ -1,7 +1,7 @@
 import OrderListRow from "./OrderListRow";
 import "./styles/OrderList.css";
 
-function OrderList({ orders, viewMode, selectedOrderId, onSelectOrder }) {
+function OrderList({ orders, viewMode, selectedOrderId, onSelectOrder, onRemoveOrder }) {
   return (
     <section className="order-list" aria-label="Order status list">
       <header className="order-list__header" aria-hidden="true">
@@ -22,6 +22,7 @@ function OrderList({ orders, viewMode, selectedOrderId, onSelectOrder }) {
             isSelected={selectedOrderId === order.id}
             isPriority={order.fulfillment_status === "unfulfilled"}
             onSelectOrder={onSelectOrder}
+            onRemoveOrder={onRemoveOrder}
           />
         ))}
       </div>

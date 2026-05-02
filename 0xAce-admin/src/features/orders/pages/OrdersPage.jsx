@@ -14,7 +14,7 @@ import "./styles/OrdersPage.css";
 
 function OrdersPage() {
   const { searchQuery } = useAdminShell();
-  const { orders } = useOrders();
+  const { orders, removeOrder } = useOrders();
   const [activeFilter, setActiveFilter] = useState("all");
   const [viewMode, setViewMode] = useState("full");
   const [selectedOrderId, setSelectedOrderId] = useState(null);
@@ -147,6 +147,10 @@ function OrdersPage() {
             viewMode={viewMode}
             selectedOrderId={selectedOrderId}
             onSelectOrder={setSelectedOrderId}
+            onRemoveOrder={async (orderId) => {
+              await removeOrder(orderId);
+              setSelectedOrderId((currentValue) => (currentValue === orderId ? null : currentValue));
+            }}
           />
         )}
       </section>
