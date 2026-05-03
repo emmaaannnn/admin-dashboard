@@ -74,6 +74,10 @@ export function isProductOnSale(product) {
   return product.variants.some((variant) => isVariantOnSale(variant));
 }
 
+export function hasValidProductImage(image) {
+  return typeof image?.image_url === "string" && image.image_url.trim().length > 0;
+}
+
 export function cloneProduct(product) {
   return {
     ...product,
@@ -81,7 +85,7 @@ export function cloneProduct(product) {
     description: product.description ?? "",
     size_guide: normalizeSizeGuide(product.size_guide),
     variants: product.variants.map((variant) => ({ ...variant })),
-    images: product.images.map((image) => ({ ...image })),
+    images: product.images.filter(hasValidProductImage).map((image) => ({ ...image })),
   };
 }
 
@@ -135,7 +139,7 @@ export function buildProducts(data, drops) {
       (variant) => variant.product_id === product.id
     );
     const images = data.product_images.filter(
-      (image) => image.product_id === product.id
+      (image) => image.product_id === product.id && hasValidProductImage(image)
     );
 
     return hydrateProduct(
