@@ -10,6 +10,7 @@ import {
 import supabase, { isSupabaseConfigured } from "../../../shared/lib/supabaseClient";
 
 const ProductsContext = createContext(null);
+const PRODUCT_MEDIA_BUCKET = "product-media";
 
 function formatSupabaseError(error) {
   if (!error) {
@@ -24,8 +25,7 @@ function formatSupabaseError(error) {
 }
 
 function serializeProductRecord(product) {
-  return {
-    id: product.id,
+  const record = {
     drop_id: product.drop_id || null,
     slug: product.slug,
     name: product.name,
@@ -36,12 +36,17 @@ function serializeProductRecord(product) {
     status: product.status,
     size_guide: product.size_guide ?? null,
   };
+
+  if (isPersistedRecordId(product.id)) {
+    record.id = product.id;
+  }
+
+  return record;
 }
 
-function serializeVariantRecord(variant) {
-  return {
-    id: variant.id,
-    product_id: variant.product_id,
+function serializeVariantRecord(variant, productId, options = {}) {
+  const record = {
+    product_id: productId ?? variant.product_id,
     sku: variant.sku,
     color: variant.color?.trim() || null,
     size: variant.size?.trim() || null,
@@ -54,6 +59,138 @@ function serializeVariantRecord(variant) {
     inventory_status: variant.inventory_status,
     active: variant.active ?? true,
   };
+
+  if (options.includeId && isPersistedRecordId(variant.id)) {
+    record.id = variant.id;
+  }
+
+  return record;
+}
+
+function isPersistedRecordId(recordId) {
+  return typeof recordId === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(recordId);
+}
+
+function isPersistedImageId(imageId) {
+  return typeof imageId === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(imageId);
+}
+
+function getPublicStorageUrl(bucket, path) {
+  return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+}
+
+function getStoragePaths(images) {
+  return images
+    .map((image) => ({
+      bucket: image.storage_bucket || PRODUCT_MEDIA_BUCKET,
+      path: image.storage_path || null,
+    }))
+    .filter((entry) => entry.path);
+}
+
+async function deleteStorageObjects(images) {
+  const entries = getStoragePaths(images);
+
+  if (!entries.length) {
+    return;
+  }
+
+  const bucketMap = entries.reduce((result, entry) => {
+    const currentPaths = result.get(entry.bucket) ?? [];
+    currentPaths.push(entry.path);
+    result.set(entry.bucket, currentPaths);
+    return result;
+  }, new Map());
+
+  for (const [bucket, paths] of bucketMap.entries()) {
+    const { error } = await supabase.storage.from(bucket).remove(paths);
+
+    if (error) {
+      throw error;
+    }
+  }
+}
+
+async function uploadPendingImages(images, productId) {
+  const pendingImages = images.filter((image) => image.uploadBlob);
+
+  if (!pendingImages.length) {
+    return [];
+  }
+
+  const uploadedImages = [];
+
+  for (const image of pendingImages) {
+    const imageId = typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `image-${Date.now()}-${uploadedImages.length + 1}`;
+    const storagePath = `products/${productId}/${imageId}.webp`;
+    const { error: uploadError } = await supabase.storage
+      .from(PRODUCT_MEDIA_BUCKET)
+      .upload(storagePath, image.uploadBlob, {
+        cacheControl: "3600",
+        contentType: image.mime_type || "image/webp",
+        upsert: false,
+      });
+
+    if (uploadError) {
+      throw uploadError;
+    }
+
+    uploadedImages.push({
+      ...image,
+      id: imageId,
+      product_id: productId,
+      storage_bucket: PRODUCT_MEDIA_BUCKET,
+      storage_path: storagePath,
+      image_url: getPublicStorageUrl(PRODUCT_MEDIA_BUCKET, storagePath),
+    });
+  }
+
+  return uploadedImages;
+}
+
+function serializeImageRecord(image, productId, sortOrder) {
+  const record = {
+    product_id: productId,
+    image_url: image.image_url,
+    alt_text: image.alt_text?.trim() || null,
+    image_type: image.image_type || image.mime_type || "image/webp",
+    sort_order: sortOrder,
+    storage_bucket: image.storage_bucket || null,
+    storage_path: image.storage_path || null,
+    mime_type: image.mime_type || null,
+    file_size: Number(image.file_size) || null,
+    width: Number(image.width) || null,
+    height: Number(image.height) || null,
+  };
+
+  if (isPersistedImageId(image.id)) {
+    record.id = image.id;
+  }
+
+  return record;
+}
+
+async function fetchHydratedProduct(productId, drops) {
+  const [productRes, variantsRes, imagesRes] = await Promise.all([
+    supabase.from("products").select("*").eq("id", productId).maybeSingle(),
+    supabase.from("product_variants").select("*").eq("product_id", productId),
+    supabase.from("product_images").select("*").eq("product_id", productId).order("sort_order", { ascending: true }),
+  ]);
+
+  if (productRes.error || variantsRes.error || imagesRes.error || !productRes.data) {
+    throw productRes.error || variantsRes.error || imagesRes.error || new Error("Unable to reload the saved product.");
+  }
+
+  return hydrateProduct(
+    {
+      ...productRes.data,
+      variants: variantsRes.data ?? [],
+      images: imagesRes.data ?? [],
+    },
+    drops
+  );
 }
 
 
@@ -134,10 +271,61 @@ function ProductsProvider({ children }) {
   }, []);
 
 
-  const createProduct = useCallback((productDraft) => {
+  const createProduct = useCallback(async (productDraft) => {
     const nextProduct = hydrateProduct(cloneProduct(productDraft), drops);
-    setProducts((currentProducts) => [nextProduct, ...currentProducts]);
-    return nextProduct;
+
+    if (!isSupabaseConfigured || !supabase || !supabase.from) {
+      setProducts((currentProducts) => [nextProduct, ...currentProducts]);
+      return nextProduct;
+    }
+
+    try {
+      const { data: createdProduct, error: createProductError } = await supabase
+        .from("products")
+        .insert(serializeProductRecord(nextProduct))
+        .select("*")
+        .single();
+
+      if (createProductError || !createdProduct) {
+        throw createProductError || new Error("Unable to create the product.");
+      }
+
+      const createdProductId = createdProduct.id;
+      const createdVariants = nextProduct.variants.map((variant) =>
+        serializeVariantRecord(variant, createdProductId)
+      );
+
+      if (createdVariants.length) {
+        const { error: variantsError } = await supabase
+          .from("product_variants")
+          .insert(createdVariants);
+
+        if (variantsError) {
+          throw variantsError;
+        }
+      }
+
+      const uploadedImages = await uploadPendingImages(nextProduct.images, createdProductId);
+
+      if (uploadedImages.length) {
+        const { error: imageInsertError } = await supabase
+          .from("product_images")
+          .insert(uploadedImages.map((image, index) => serializeImageRecord(image, createdProductId, index)));
+
+        if (imageInsertError) {
+          await deleteStorageObjects(uploadedImages);
+          throw imageInsertError;
+        }
+      }
+
+      const persistedProduct = await fetchHydratedProduct(createdProductId, drops);
+      setProducts((currentProducts) => [persistedProduct, ...currentProducts]);
+      setError("");
+      return persistedProduct;
+    } catch (persistError) {
+      setError(formatSupabaseError(persistError));
+      throw persistError;
+    }
   }, [drops]);
 
   const updateProduct = useCallback(async (productId, productDraft) => {
@@ -160,6 +348,24 @@ function ProductsProvider({ children }) {
               )
               .map((variant) => variant.id)
           : [];
+        const removedImageIds = sourceProduct
+          ? sourceProduct.images
+              .filter(
+                (sourceImage) =>
+                  isPersistedImageId(sourceImage.id) &&
+                  !nextProduct.images.some((draftImage) => draftImage.id === sourceImage.id)
+              )
+              .map((image) => image.id)
+          : [];
+        const removedImages = sourceProduct
+          ? sourceProduct.images.filter(
+              (sourceImage) =>
+                isPersistedImageId(sourceImage.id) &&
+                !nextProduct.images.some((draftImage) => draftImage.id === sourceImage.id)
+            )
+          : [];
+        const persistedVariants = nextProduct.variants.filter((variant) => isPersistedRecordId(variant.id));
+        const newVariants = nextProduct.variants.filter((variant) => !isPersistedRecordId(variant.id));
 
         const { error: productError } = await supabase
           .from("products")
@@ -181,10 +387,23 @@ function ProductsProvider({ children }) {
           }
         }
 
-        if (nextProduct.variants.length) {
+        await deleteStorageObjects(removedImages);
+
+        if (removedImageIds.length) {
+          const { error: deleteImagesError } = await supabase
+            .from("product_images")
+            .delete()
+            .in("id", removedImageIds);
+
+          if (deleteImagesError) {
+            throw deleteImagesError;
+          }
+        }
+
+        if (persistedVariants.length) {
           const { error: variantsError } = await supabase
             .from("product_variants")
-            .upsert(nextProduct.variants.map((variant) => serializeVariantRecord(variant)), {
+            .upsert(persistedVariants.map((variant) => serializeVariantRecord(variant, productId, { includeId: true })), {
               onConflict: "id",
             });
 
@@ -193,7 +412,43 @@ function ProductsProvider({ children }) {
           }
         }
 
+        if (newVariants.length) {
+          const { error: insertVariantsError } = await supabase
+            .from("product_variants")
+            .insert(newVariants.map((variant) => serializeVariantRecord(variant, productId)));
+
+          if (insertVariantsError) {
+            throw insertVariantsError;
+          }
+        }
+
+        const uploadedImages = await uploadPendingImages(nextProduct.images, productId);
+
+        if (uploadedImages.length) {
+          const persistedImageCount = nextProduct.images.filter((image) => isPersistedImageId(image.id)).length;
+          const { error: imageInsertError } = await supabase
+            .from("product_images")
+            .insert(
+              uploadedImages.map((image, index) =>
+                serializeImageRecord(image, productId, persistedImageCount + index)
+              )
+            );
+
+          if (imageInsertError) {
+            await deleteStorageObjects(uploadedImages);
+            throw imageInsertError;
+          }
+        }
+
+        const persistedProduct = await fetchHydratedProduct(productId, drops);
+        setProducts((currentProducts) =>
+          currentProducts.map((product) =>
+            product.id === productId ? persistedProduct : product
+          )
+        );
+
         setError("");
+        return persistedProduct;
       } catch (persistError) {
         if (sourceProduct) {
           setProducts((currentProducts) =>
@@ -211,11 +466,53 @@ function ProductsProvider({ children }) {
     return nextProduct;
   }, [drops, products]);
 
-  const removeProduct = useCallback((productId) => {
+  const removeProduct = useCallback(async (productId) => {
+    const sourceProduct = products.find((product) => product.id === productId) ?? null;
+
+    if (isSupabaseConfigured && supabase && supabase.from) {
+      try {
+        if (sourceProduct) {
+          await deleteStorageObjects(sourceProduct.images);
+        }
+
+        const { error: deleteImagesError } = await supabase
+          .from("product_images")
+          .delete()
+          .eq("product_id", productId);
+
+        if (deleteImagesError) {
+          throw deleteImagesError;
+        }
+
+        const { error: deleteVariantsError } = await supabase
+          .from("product_variants")
+          .delete()
+          .eq("product_id", productId);
+
+        if (deleteVariantsError) {
+          throw deleteVariantsError;
+        }
+
+        const { error: deleteProductError } = await supabase
+          .from("products")
+          .delete()
+          .eq("id", productId);
+
+        if (deleteProductError) {
+          throw deleteProductError;
+        }
+
+        setError("");
+      } catch (persistError) {
+        setError(formatSupabaseError(persistError));
+        throw persistError;
+      }
+    }
+
     setProducts((currentProducts) =>
       currentProducts.filter((product) => product.id !== productId)
     );
-  }, []);
+  }, [products]);
 
   const createDrop = useCallback((dropDraft) => {
     const nextDrop = cloneDrop(dropDraft);

@@ -29,6 +29,13 @@ const dummyClient = {
       },
     }),
   },
+  storage: {
+    from: () => ({
+      upload: async () => ({ data: null, error: new Error("Supabase not configured") }),
+      remove: async () => ({ data: null, error: new Error("Supabase not configured") }),
+      getPublicUrl: () => ({ data: { publicUrl: "" } }),
+    }),
+  },
 };
 
 if (!isSupabaseConfigured) {

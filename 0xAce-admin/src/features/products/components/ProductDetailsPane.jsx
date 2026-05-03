@@ -207,11 +207,13 @@ function ProductDetailsPane({
           product_id: product.id,
           image_url: optimizedImage.previewUrl,
           mime_type: optimizedImage.mimeType,
+          image_type: optimizedImage.mimeType,
           file_name: optimizedImage.fileName,
           file_size: optimizedImage.fileSize,
           width: optimizedImage.width,
           height: optimizedImage.height,
           alt_text: product.name,
+          uploadBlob: optimizedImage.uploadBlob,
         });
       } catch (error) {
         errors.push(`${file.name}: ${error.message}`);
