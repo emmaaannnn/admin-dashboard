@@ -73,8 +73,8 @@ function NewProductPage() {
     }));
   };
 
-  const handleCreateProduct = () => {
-    const nextProduct = createProduct(draftProduct);
+  const handleCreateProduct = async () => {
+    const nextProduct = await createProduct(draftProduct);
     navigate(`/products/${nextProduct.id}`);
   };
 

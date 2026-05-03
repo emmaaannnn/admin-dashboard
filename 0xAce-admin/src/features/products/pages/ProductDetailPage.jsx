@@ -22,9 +22,9 @@ function ProductDetailPage() {
     setDraftProduct(sourceProduct ? cloneProduct(sourceProduct) : null);
   }, [sourceProduct]);
 
-  const handleDeleteProduct = () => {
+  const handleDeleteProduct = async () => {
     if (window.confirm("Are you sure you want to delete this product and all its images? This cannot be undone.")) {
-      removeProduct(productId);
+      await removeProduct(productId);
       navigate("/products");
     }
   };

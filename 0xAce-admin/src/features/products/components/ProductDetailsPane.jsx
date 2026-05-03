@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import ProductEditorCard from "./ProductEditorCard";
 import ProductVariantTable from "./ProductVariantTable";
-import { isProductOnSale } from "../lib/productsState";
+import { PRODUCT_IMAGE_MAX_BYTES, optimizeProductImage } from "../lib/imageUpload";
+import { hasValidProductImage, isProductOnSale } from "../lib/productsState";
 import "./styles/ProductDetailsPane.css";
 
 const DESCRIPTION_ACTIONS = [
@@ -168,6 +169,81 @@ function ProductDetailsPane({
   title = product.name,
 }) {
   const productIsOnSale = isProductOnSale(product);
+  const visibleImages = product.images.filter(hasValidProductImage);
+  const fileInputRef = useRef(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const [uploadStatus, setUploadStatus] = useState("");
+
+  const handleOpenFilePicker = () => {
+    if (isUploading) {
+      return;
+    }
+
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event) => {
+    const selectedFiles = Array.from(event.target.files ?? []);
+    event.target.value = "";
+
+    if (!selectedFiles.length) {
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError("");
+    setUploadStatus("");
+
+    const nextImages = [];
+    const errors = [];
+
+    for (const file of selectedFiles) {
+      try {
+        const optimizedImage = await optimizeProductImage(file);
+
+        nextImages.push({
+          id: `local-image-${Date.now()}-${nextImages.length + 1}`,
+          product_id: product.id,
+          image_url: optimizedImage.previewUrl,
+          mime_type: optimizedImage.mimeType,
+          image_type: optimizedImage.mimeType,
+          file_name: optimizedImage.fileName,
+          file_size: optimizedImage.fileSize,
+          width: optimizedImage.width,
+          height: optimizedImage.height,
+          alt_text: product.name,
+          uploadBlob: optimizedImage.uploadBlob,
+        });
+      } catch (error) {
+        errors.push(`${file.name}: ${error.message}`);
+      }
+    }
+
+    if (nextImages.length) {
+      onProductChange("images", [...product.images, ...nextImages]);
+      setUploadStatus(
+        `${nextImages.length} image${nextImages.length === 1 ? "" : "s"} optimized to WebP under ${Math.round(
+          PRODUCT_IMAGE_MAX_BYTES / 1024
+        )} KB.`
+      );
+    }
+
+    if (errors.length) {
+      setUploadError(errors.join(" "));
+    }
+
+    setIsUploading(false);
+  };
+
+  const handleDeleteImage = (imageId) => {
+    onProductChange(
+      "images",
+      visibleImages.filter((image) => image.id !== imageId)
+    );
+    setUploadError("");
+    setUploadStatus("Image removed.");
+  };
 
   return (
     <section className="detail-panel">
@@ -266,16 +342,50 @@ function ProductDetailsPane({
         <ProductEditorCard
           as="aside"
           title="Media"
-          actionLabel="Upload"
+          actionLabel={isUploading ? "Processing..." : "Upload"}
+          onAction={isUploading ? undefined : handleOpenFilePicker}
           className="editor-card--media"
         >
+          <input
+            ref={fileInputRef}
+            className="media-upload-input"
+            type="file"
+            accept="image/png,image/jpeg,.jpg,.jpeg"
+            multiple
+            onChange={handleFileChange}
+          />
+          <p className="media-upload-note">
+            PNG, JPG, and JPEG files are resized in the browser, converted to WebP, and capped
+            at 500 KB before upload.
+          </p>
+          {uploadStatus ? <p className="media-upload-status">{uploadStatus}</p> : null}
+          {uploadError ? <p className="media-upload-error">{uploadError}</p> : null}
           <div className="media-grid">
-            {product.images.map((image) => (
+            {!visibleImages.length ? (
+              <div className="media-thumb-frame media-thumb-frame--empty media-thumb-frame--message">
+                No images yet
+              </div>
+            ) : null}
+            {visibleImages.map((image) => (
               <div key={image.id} className="media-thumb-frame">
+                <button
+                  type="button"
+                  className="media-thumb-delete"
+                  aria-label={`Delete image ${image.file_name ?? image.id}`}
+                  onClick={() => handleDeleteImage(image.id)}
+                >
+                  Delete
+                </button>
                 <img src={image.image_url} alt={product.name} className="media-thumb" />
+                {image.file_size ? (
+                  <div className="media-thumb-meta">
+                    <span>{Math.round(image.file_size / 1024)} KB</span>
+                    <span>{image.width}x{image.height}</span>
+                  </div>
+                ) : null}
               </div>
             ))}
-            <div className="media-thumb-frame media-thumb-frame--empty">Add More</div>
+            <div className="media-thumb-frame media-thumb-frame--empty media-thumb-frame--message">Add More</div>
           </div>
         </ProductEditorCard>
       </div>

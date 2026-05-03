@@ -70,7 +70,7 @@ function ProductTable({
                 {product.images[0] ? (
                   <img src={product.images[0].image_url} alt={product.name} className="product-row__image" />
                 ) : (
-                  <div className="product-row__image product-row__image--placeholder" />
+                  <div className="product-row__image product-row__image--placeholder">No Img</div>
                 )}
               </div>
 
