@@ -20,7 +20,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
             key={variant.id}
             className={`variant-table__row ${index === 0 ? "variant-table__row--with-labels" : ""}`.trim()}
           >
-            <div className="variant-table__field">
+            <div className="variant-table__field variant-table__field--sku">
               <span className="variant-table__field-label">SKU</span>
               <input
                 className="variant-table__text-input variant-table__text-input--strong"
@@ -29,7 +29,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
                 onChange={(event) => onVariantChange(variant.id, "sku", event.target.value)}
               />
             </div>
-            <div className="variant-table__field">
+            <div className="variant-table__field variant-table__field--color">
               <span className="variant-table__field-label">Color</span>
               <input
                 className="variant-table__text-input"
@@ -38,7 +38,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
                 onChange={(event) => onVariantChange(variant.id, "color", event.target.value)}
               />
             </div>
-            <div className="variant-table__field">
+            <div className="variant-table__field variant-table__field--size">
               <span className="variant-table__field-label">Size</span>
               <input
                 className="variant-table__text-input"
@@ -47,7 +47,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
                 onChange={(event) => onVariantChange(variant.id, "size", event.target.value)}
               />
             </div>
-            <div className="variant-table__field">
+            <div className="variant-table__field variant-table__field--price">
               <span className="variant-table__field-label variant-table__field-label--center">Price</span>
               <label className="variant-table__input-shell variant-table__price-cell">
                 <span className="variant-table__input-prefix">$</span>
@@ -65,7 +65,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
                 />
               </label>
             </div>
-            <div className="variant-table__field">
+            <div className="variant-table__field variant-table__field--compare">
               <span className="variant-table__field-label variant-table__field-label--center">Compare</span>
               <label className="variant-table__input-shell variant-table__compare-cell">
                 <span className="variant-table__input-prefix">$</span>
@@ -84,7 +84,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
                 />
               </label>
             </div>
-            <div className="variant-table__field">
+            <div className="variant-table__field variant-table__field--stock">
               <span className="variant-table__field-label variant-table__field-label--center">Stock</span>
               <div className="variant-stepper variant-table__stock-cell">
                 <button
@@ -128,7 +128,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
                 </button>
               </div>
             </div>
-            <div className="variant-table__field">
+            <div className="variant-table__field variant-table__field--status">
               <span className="variant-table__field-label">Status</span>
               <div className="variant-table__status">
                 {isVariantOnSale(variant) ? <span className="status-pill status-pill--sale">Sale</span> : null}
@@ -137,7 +137,7 @@ function ProductVariantTable({ variants, onVariantChange, onAddVariant, onDelete
                 </span>
               </div>
             </div>
-            <div className="variant-table__field variant-table__field--delete">
+            <div className="variant-table__field variant-table__field--delete variant-table__field--action">
               <span className="variant-table__field-label variant-table__field-label--center">Action</span>
               <div className="variant-table__delete-cell">
                 <button
